@@ -29,7 +29,25 @@ function App() {
   };
 
   const verifyData = async () => {
-    throw new Error("Not implemented");
+    const response = await fetch(`${API_URL}/verify`, {
+      method: "POST",
+      body: JSON.stringify({ data }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    const { isVerified } = await response.json();
+
+    if (isVerified) {
+      window.alert("Data is verified.");
+    } else {
+      const response = await fetch(`${API_URL}/recover`);
+      const { data } = await response.json();
+      setData(data);
+      window.alert("Data has been tampered. Recovered!");
+    }
   };
 
   return (

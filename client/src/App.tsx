@@ -3,7 +3,11 @@ import React, { useEffect, useState } from "react";
 const API_URL = "http://localhost:8080";
 
 function App() {
-  const [data, setData] = useState<string>();
+
+  
+  const [data, setData] = useState<string>("");
+  const [verificationResult, setVerificationResult] = useState<string | null>(null);
+
 
   useEffect(() => {
     getData();
@@ -29,7 +33,12 @@ function App() {
   };
 
   const verifyData = async () => {
-    throw new Error("Not implemented");
+      // Example verification: Check if data is not empty and has a minimum length of 3 characters.
+      if (data && data.length >= 3) {
+        setVerificationResult("Data is valid!");
+      } else {
+        setVerificationResult("Data is not valid. Please provide valid data.");
+      }
   };
 
   return (

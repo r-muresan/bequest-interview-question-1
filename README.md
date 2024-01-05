@@ -13,7 +13,7 @@ Edit this repo to answer these two questions using any technology you'd like. Fe
 
 `npm run start` in both the frontend and backend
 
-### Follow this Medium Artcile to get your local ssl certificates.
+### Follow this Medium Artcile to get your local ssl certificates:
 
 https://medium.com/@coxpert/get-https-working-in-windows-10-11-with-localhost-dev-environment-8fc5e5c63652
 

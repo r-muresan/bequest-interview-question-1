@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import CryptoJS from 'crypto-js';
 
 const API_URL = "http://localhost:8080";
 
@@ -16,9 +17,12 @@ function App() {
   };
 
   const updateData = async () => {
+    // compute hash of data
+    const hash = CryptoJS.SHA256(JSON.stringify(data)).toString();
+
     await fetch(API_URL, {
       method: "POST",
-      body: JSON.stringify({ data }),
+      body: JSON.stringify({ data, hash }),
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",

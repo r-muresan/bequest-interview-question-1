@@ -4,6 +4,7 @@ const API_URL = "http://localhost:8080";
 
 function App() {
   const [data, setData] = useState<string>();
+  const [verified, setVerified] = useState<boolean>(true);
 
   useEffect(() => {
     getData();
@@ -28,9 +29,42 @@ function App() {
     await getData();
   };
 
-  const verifyData = async () => {
-    throw new Error("Not implemented");
+  const tamperData = async () => {
+    const apiUrl: string = `${API_URL}/tamper`;
+    await fetch(apiUrl, {
+      method: "POST",
+      body: JSON.stringify({ data }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    await getData();
   };
+
+  const verifyData = async () => {
+    const apiUrl: string = `${API_URL}/verify`;
+    const response: Response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const { verified }: { verified: boolean } = await response.json();
+    setVerified(verified);
+  };
+
+  const recoverData = async (): Promise<void> => {
+    const apiUrl: string = `${API_URL}/recover`;
+    await fetch(apiUrl, {
+      method: "POST",
+    });
+
+    await getData();
+    setVerified(true);
+  }
 
   return (
     <div
@@ -62,7 +96,18 @@ function App() {
         <button style={{ fontSize: "20px" }} onClick={verifyData}>
           Verify Data
         </button>
+        <button style={{ fontSize: "20px" }} onClick={tamperData}>
+          Tamper Data(Test Purpose)
+        </button>
       </div>
+      {!verified && (
+        <div>
+          <label style={{ color: 'red' }}>Data is Tampered.</label>
+          <button style={{ fontSize: "20px" }} onClick={recoverData}>
+            Recover Data
+          </button>
+        </div>
+      )}
     </div>
   );
 }

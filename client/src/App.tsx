@@ -29,7 +29,31 @@ function App() {
   };
 
   const verifyData = async () => {
-    throw new Error("Not implemented");
+    try {
+      const verifyResponse = await fetch(`${API_URL}/verify`, {
+        method: "POST",
+        body: JSON.stringify({ data }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+
+      const { isVerified } = await verifyResponse.json();
+
+      if (isVerified === true) {
+        window.alert("Data is verified.");
+      } else {
+        window.alert("Data got Tampered. Recovering data...");
+        const recoveryResponse = await fetch(`${API_URL}/recover`);
+        const { data: recoveredData } = await recoveryResponse.json();
+        setData(recoveredData);
+        window.alert("Recovery Successfull!");
+      }
+    }
+    catch (error) {
+      window.alert("Error during data verification. Please try again.");
+    }
   };
 
   return (

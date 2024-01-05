@@ -33,7 +33,14 @@ function App() {
   };
 
   const verifyData = async () => {
-    throw new Error("Not implemented");
+    try {
+      const response = await fetch(`${API_URL}/verify-data`);
+      const result = await response.json();
+
+      console.log(result);
+    } catch (error) {
+      console.error('Error verifying data:', error);
+    }
   };
 
   return (

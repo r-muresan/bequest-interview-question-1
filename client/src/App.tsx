@@ -33,6 +33,11 @@ function App() {
   };
 
   const updateData = async () => {
+    await _updateData(data);
+    await getData();
+  };
+
+  const _updateData = async (data) => {
     await fetch(API_URL, {
       method: "POST",
       body: JSON.stringify({ data }),
@@ -42,12 +47,11 @@ function App() {
       },
     });
 
-    saveChecksum();
-
-    await getData();
+    saveChecksum(data);
+    saveDataLocalStorage(data);
   };
 
-  const saveChecksum = () => {
+  const saveChecksum = (data) => {
     const hash = SHA256(data).toString(enc.Hex);
     setChecksum(hash);
     setVerified(true);
@@ -55,12 +59,23 @@ function App() {
     console.log("checksum", hash);
   };
 
-  const verifyData = async () => {
+  const saveDataLocalStorage = (data) => {
+      localStorage.setItem('data', data);
+  };
+
+  const verifyData = () => {
     const hash = SHA256(data).toString(enc.Hex);
     setDisplayVerified(true);
     setVerified(hash == checksum);
     console.log("hash", hash);
     console.log("checksum", checksum);
+  };
+
+  const recoverData = async () => {
+    const localData = localStorage.getItem('data');
+    console.log("localData", localData);
+    await _updateData(localData);
+    await getData();
   };
 
   return (
@@ -101,9 +116,14 @@ function App() {
               Verified
             </div>
           ) : (
-            <div style={{ color: "red" }}>
-              Tampered!
-            </div>
+            <>
+              <div style={{ color: "red" }}>
+                Tampered!
+              </div>
+              <button style={{ fontSize: "20px" }} onClick={recoverData}>
+                Recover Data
+              </button>
+            </>
           )}
         </div>
       )}

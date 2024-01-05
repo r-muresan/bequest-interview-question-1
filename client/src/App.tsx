@@ -1,13 +1,30 @@
 import React, { useEffect, useState } from "react";
+import { SHA256, enc } from "crypto-js";
 
 const API_URL = "http://localhost:8080";
 
 function App() {
   const [data, setData] = useState<string>();
+  const [checksum, setChecksum] = useState<string>();
+  const [verified, setVerified] = useState<boolean>(false);
+  const [displayVerified, setDisplayVerified] = useState<boolean>(false);
 
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    const localChecksum = localStorage.getItem('checksum');
+    if (localChecksum && localChecksum !== 'undefined') {
+      setChecksum(localChecksum);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (checksum !== undefined) {
+      localStorage.setItem('checksum', checksum);
+    }
+  }, [checksum]);
 
   const getData = async () => {
     const response = await fetch(API_URL);
@@ -25,11 +42,25 @@ function App() {
       },
     });
 
+    saveChecksum();
+
     await getData();
   };
 
+  const saveChecksum = () => {
+    const hash = SHA256(data).toString(enc.Hex);
+    setChecksum(hash);
+    setVerified(true);
+    console.log("data", data);
+    console.log("checksum", hash);
+  };
+
   const verifyData = async () => {
-    throw new Error("Not implemented");
+    const hash = SHA256(data).toString(enc.Hex);
+    setDisplayVerified(true);
+    setVerified(hash == checksum);
+    console.log("hash", hash);
+    console.log("checksum", checksum);
   };
 
   return (
@@ -63,6 +94,19 @@ function App() {
           Verify Data
         </button>
       </div>
+      { displayVerified && (
+        <div>
+          { verified ? (
+            <div style={{ color: "green" }}>
+              Verified
+            </div>
+          ) : (
+            <div style={{ color: "red" }}>
+              Tampered!
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

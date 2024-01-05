@@ -15,7 +15,9 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", (req, res) => {
-  database.data = req.body.data;
+  const data = req.body.data;
+  database.data = data;
+  console.log("data", data);
   res.sendStatus(200);
 });
 

@@ -1,6 +1,22 @@
 import React, { useEffect, useState } from "react";
-
 const API_URL = "http://localhost:8080";
+
+async function hashString(string: string) {
+    // Convert the string to an ArrayBuffer
+    const encoder = new TextEncoder();
+    const data = encoder.encode(string);
+
+    // Hash the ArrayBuffer
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+
+    // Convert the ArrayBuffer to a hexadecimal string
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+    return hashHex;
+}
+
+
 
 function App() {
   const [data, setData] = useState<string>();
@@ -16,6 +32,9 @@ function App() {
   };
 
   const updateData = async () => {
+    // store hash of data in local storage.
+    const hash = await hashString(data!);
+    localStorage.setItem("dataHash",hash);
     await fetch(API_URL, {
       method: "POST",
       body: JSON.stringify({ data }),
@@ -27,9 +46,21 @@ function App() {
 
     await getData();
   };
-
+  const [tamperStatus,setTamperStatus] = useState(""); // state variables to indicate whether data has been tampered with
   const verifyData = async () => {
-    throw new Error("Not implemented");
+    // check that hash matches the one stored in localStorage
+    const storedHash = localStorage.getItem("dataHash");
+    const serverHash = await hashString(data!);
+    if (serverHash === storedHash)
+    {
+      // data not tampered with
+      setTamperStatus("Data has NOT been tampered with.");
+    }
+    else
+    {
+      // data tampered with
+      setTamperStatus("Data HAS been tampered with.");
+    }
   };
 
   return (
@@ -63,6 +94,9 @@ function App() {
           Verify Data
         </button>
       </div>
+      <div>
+          {tamperStatus}
+        </div>
     </div>
   );
 }

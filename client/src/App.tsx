@@ -51,7 +51,9 @@ function App() {
     // check that hash matches the one stored in localStorage
     const storedHash = localStorage.getItem("dataHash");
     const serverHash = await hashString(data!);
-    if (serverHash === storedHash)
+    console.log("stored hash: " + storedHash);
+    console.log("server hash: " + serverHash);
+    if (!storedHash || (serverHash === storedHash))
     {
       // data not tampered with
       setTamperStatus("Data has NOT been tampered with.");

@@ -4,17 +4,17 @@ At Bequest, we require that important user data is tamper proof. Otherwise, our 
 Only the user is able to update their own data.
 
 **1. How does the client insure that their data has not been tampered with? Assume that the database is compromised.**
-To verify if the client and the server data is not tampered, I followed the following steps
+To verify if the client and the server data is not tampered with, I followed the following steps
 
-1. Server generates public and private key
-2. When the client initates communication, server sends the public key to the client
-3. Client sends the data to server and server store the same in database
-4. Server then generates the digital signature and sends it back to client
-5. In order to verify that the data is not tampered, client will send digital signature and public key to the server and the server verifies if the data is tampered through digital signature
+1. The server generates a public and private key
+2. When the client initiates communication, the server sends the public key to the client
+3. The client sends the data to the server and the server stores the same in the database
+4. The server then generates the digital signature and sends it back to the client
+5. To verify that the data is not tampered with, the client will send a digital signature and public key to the server and the server will verify if the data is tampered with through a digital signature
 
 <br />
-**2. If the data has been tampered with, how can the client recover the lost data?** <br/>
-I am using a backup to maintain the historical data. The historical data is backedup after every update request from the client.
+**2. If the data has been tampered with, how can the client recover the lost data?**<br/>
+I am using a backup to maintain the historical data. The historical data is backed up after every update request from the client.
 
 ### Demo:
 

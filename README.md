@@ -18,3 +18,19 @@ Edit this repo to answer these two questions using any technologies you'd like, 
 1. Clone the repo
 2. Make a PR with your changes in your repo
 3. Email your github repository to robert@bequest.finance
+
+
+# Solution
+
+## Server:
+
+1. Hash is added to check tamper
+2. Added verify-data api to check the data is tempered or not
+3. Added backup database for recovery and recover-data api to recover data
+
+
+## Client:
+
+1. Implemented verifyData method which check the data is tampered or not
+2. This data is compared with hashed data on the server
+3. If the data is tampered recover API call is made to fetch backup data

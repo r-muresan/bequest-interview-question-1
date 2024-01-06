@@ -4,6 +4,7 @@ const API_URL = "http://localhost:8080";
 
 function App() {
   const [data, setData] = useState<string>();
+  const [verificationResult, setVerificationResult] = useState<boolean>(true);
 
   useEffect(() => {
     getData();
@@ -29,7 +30,16 @@ function App() {
   };
 
   const verifyData = async () => {
-    throw new Error("Not implemented");
+    const response = await fetch(`${API_URL}/verify-data`);
+
+    const { verified } = await response.json();
+    setVerificationResult(verified);
+  };
+
+  const recoverData = async () => {
+    const response = await fetch(`${API_URL}/recover-data`);
+
+    await getData();
   };
 
   return (
@@ -62,6 +72,16 @@ function App() {
         <button style={{ fontSize: "20px" }} onClick={verifyData}>
           Verify Data
         </button>
+        {verificationResult ? (
+          <p>Data is valid: {data}</p>
+        ) : (
+          <div>
+            <p>Data is invalid or tampered with.</p>
+            <button style={{ fontSize: "20px" }} onClick={recoverData}>
+              Recover Data
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -13,6 +13,14 @@
 		"vite-tsconfig-paths": "^4.2.3",
 		"web-vitals": "^3.0.0"
 	},
+	"devDependencies": {
+		"@testing-library/react": "^14.1.2",
+		"@testing-library/user-event": "^14.5.2",
+		"@types/jest": "^29.5.11",
+		"@types/node": "^20.10.6",
+		"@types/react": "^18.2.47",
+		"@types/react-dom": "^18.2.18"
+	},
 	"scripts": {
 		"start": "vite",
 		"build": "tsc && vite build",
@@ -35,13 +43,5 @@
 			"last 1 firefox version",
 			"last 1 safari version"
 		]
-	},
-	"devDependencies": {
-		"@testing-library/react": "^14.1.2",
-		"@testing-library/user-event": "^14.5.2",
-		"@types/jest": "^29.5.11",
-		"@types/node": "^20.10.6",
-		"@types/react": "^18.2.47",
-		"@types/react-dom": "^18.2.18"
 	}
 }

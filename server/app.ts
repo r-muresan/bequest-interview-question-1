@@ -3,7 +3,10 @@ import cors from "cors";
 
 const PORT = 8080;
 const app = express();
-const database = { data: "Hello World", hash: "123456789" };
+const database = {
+	data: "Hello World",
+	hash: "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e",
+};
 
 app.use(cors());
 app.use(express.json());

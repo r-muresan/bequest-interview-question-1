@@ -1,32 +1,20 @@
 import { useCallback, useEffect, useState } from "react";
+import { generateHash, checkHash } from "./utils/crypto";
 
 const API_URL = "http://localhost:8080";
 
-const generateHash = async (input: string | undefined) => {
-	const encoder = new TextEncoder();
-	const data = encoder.encode(input);
-	const hash = await window.crypto.subtle.digest("SHA-256", data);
-	const hashArray = Array.from(new Uint8Array(hash));
-	const hashHex = hashArray
-		.map((b) => b.toString(16).padStart(2, "0"))
-		.join("");
-	return hashHex;
-};
-
-const checkHash = async (input: string | undefined, hash: string) => {
-	const expectedHash = await generateHash(input);
-	return hash === expectedHash;
+type Data = {
+	data: string;
+	hash: string;
 };
 
 function App() {
 	const [localData, setLocalData] = useState<string>("");
 
-	const getData: () => Promise<{ data: string; hash: string }> =
-		useCallback(async () => {
-			const response = await fetch(API_URL);
-			const { data, hash } = await response.json();
-			return { data, hash };
-		}, []);
+	const getData = useCallback(async () => {
+		const response = await fetch(API_URL);
+		return (await response.json()) as Data;
+	}, []);
 
 	const updateData = useCallback(async () => {
 		const newHash = await generateHash(localData);
@@ -46,42 +34,42 @@ function App() {
 
 	const getInitialData = useCallback(async () => {
 		const { data, hash } = await getData();
-		if (!await checkHash(data, hash)) {
-      // Recover from localStorage
-			const localStorageData = localStorage.getItem("data");
-			if (localStorageData) {
-				console.log(
-					"Data is not valid, restoring localStorage data:",
-					localStorageData
-				);
-				setLocalData(localStorageData);
-				// updateData();
-			}
-		} else {
+		if (await checkHash(data, hash)) {
 			localStorage.setItem("hash", hash);
 			localStorage.setItem("data", data);
 			setLocalData(data);
+		} else {
+			// Recover from localStorage
+			const localStorageData = localStorage.getItem("data");
+			if (localStorageData) {
+				setLocalData(localStorageData);
+				alert(
+					"Data is NOT valid, restoring localStorage data: " + localStorageData
+				);
+			} else {
+				alert("Data is NOT valid, no localStorage data found");
+			}
 		}
 	}, [getData]);
-
-	useEffect(() => {
-		getInitialData();
-	}, [getInitialData]);
 
 	const verifyData = async () => {
 		const response = await fetch(API_URL);
 		const { data, hash } = await response.json();
 		const expectedHash = await generateHash(data);
 		if (hash !== localStorage.getItem("hash") || expectedHash !== hash) {
-			alert("Data is not valid!!");
+			alert("Data is NOT valid");
 		} else {
-			alert("Data is valid!!");
+			alert("Data is valid");
 		}
 	};
 
 	const hackData = async () => {
 		await fetch(API_URL + "/hack");
 	};
+
+	useEffect(() => {
+		getInitialData();
+	}, [getInitialData]);
 
 	return (
 		<div

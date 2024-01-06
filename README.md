@@ -1,20 +1,81 @@
-# Tamper Proof Data
+# Bequest Data Integrity and Security Solution
 
-At Bequest, we require that important user data is tamper proof. Otherwise, our system can incorrectly distribute assets if our internal database is breached. 
-Only the user is able to update their own data.
+## Problem Statement
 
+At Bequest, ensuring the integrity of user data is paramount to prevent incorrect asset distribution in the event of a database breach. It's crucial that only the user can update their own data. The challenge lies in guaranteeing tamper-proof data and devising a recovery mechanism in case of data compromise.
 
-**1. How does the client insure that their data has not been tampered with? Assume that the database is compromised.**
-<br />
-**2. If the data has been tampered with, how can the client recover the lost data?**
+## Solution Overview
 
+To address these concerns, I propose a comprehensive solution based on encryption and a robust backup strategy.
 
-Edit this repo to answer these two questions using any technologies you'd like, there any many possible solutions. Feel free to add comments.
+### 1. Data Integrity Assurance
 
-### To run the apps:
-```npm run start``` in both the frontend and backend
+Implement end-to-end encryption for sensitive user data using strong cryptographic algorithms. Utilize SHA-256 or similar hashing algorithms to generate unique hash values for each piece of data.
 
-## To make a submission:
-1. Clone the repo
-2. Make a PR with your changes in your repo
-3. Email your github repository to robert@bequest.finance
+- Encrypt sensitive user data using industry-standard encryption algorithms.
+- Generate and store unique hash values for each piece of encrypted data.
+- During data retrieval, recalculate the hash and compare it with the stored value.
+- If the hashes don't match, it indicates data tampering.
+
+### 2. Data Recovery Mechanism
+
+In the unfortunate event of data tampering, a reliable recovery mechanism is crucial.
+
+- Regularly back up the encrypted user data.
+- Store multiple versions of backups to facilitate point-in-time recovery.
+- Set up a monitoring system to detect any changes in hash values.
+- If tampering is detected, initiate a rollback process using the latest untampered backup.
+
+## Getting Started
+
+1. **Encryption Implementation:**
+
+   - Choose a secure encryption algorithm (e.g., AES-256) for data encryption.
+   - Implement end-to-end encryption for sensitive user data.
+   - Integrate SHA-256 or similar hashing algorithms for hash generation.
+
+2. **Hash Management:**
+
+   - Develop a secure mechanism to store and manage hash values on the server.
+   - Ensure hash values are recalculated and verified during data retrieval.
+
+3. **Backup Strategy:**
+
+   - Set up a regular backup schedule for encrypted user data.
+   - Store backup versions securely, considering redundancy and accessibility.
+
+4. **Monitoring and Detection:**
+
+   - Implement a monitoring system to detect discrepancies in hash values.
+   - Establish alerts and notifications for immediate response to potential tampering.
+
+5. **Rollback Procedure:**
+   - Define a clear procedure for initiating data rollback in case of tampering.
+   - Communicate the rollback process to relevant stakeholders.
+
+By following these guidelines, I can establish a robust data integrity and security framework, safeguarding user data from tampering and ensuring a reliable recovery process in case of compromise.
+
+## How to run this app?
+
+### Server
+
+Execute the command `npm start` to launch the server application.
+
+### Client
+
+Initiate the client application by running the command `npm start`.
+
+## Implementation Overview
+
+### Backend - API Endpoints
+
+- `/ GET`: Retrieves user data.
+- `/ POST`: Updates user data.
+- `/verify POST`: Validates the integrity of current data.
+- `/rollback PUT`: Reverts user data to the previous state using backup data.
+
+### Client
+
+- `Update Data`: Modifies the database with the input content.
+- `Verify Data`: Checks for potential tampering with database data. If tampering is detected, an error message is displayed, providing an option to `Recover`.
+- `Rollback Data`: Restores the recently updated data, making it visible in the input.

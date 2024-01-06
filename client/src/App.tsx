@@ -4,6 +4,10 @@ const API_URL = "http://localhost:8080";
 
 function App() {
   const [data, setData] = useState<string>();
+  // PublicKey state variable
+  const [pk, setPk] = useState<string>();
+  //Signature state variable for verification
+  const [signature, setSignature] = useState<string>();
 
   useEffect(() => {
     getData();
@@ -11,12 +15,13 @@ function App() {
 
   const getData = async () => {
     const response = await fetch(API_URL);
-    const { data } = await response.json();
+    const { data, publicKey } = await response.json();
     setData(data);
+    setPk(publicKey);
   };
 
   const updateData = async () => {
-    await fetch(API_URL, {
+    let response = await fetch(API_URL, {
       method: "POST",
       body: JSON.stringify({ data }),
       headers: {
@@ -24,12 +29,35 @@ function App() {
         "Content-Type": "application/json",
       },
     });
-
+    // Receiving digital signature from valiadating data
+    let { sign } = await response.json();
+    setSignature(sign);
     await getData();
   };
 
   const verifyData = async () => {
-    throw new Error("Not implemented");
+    let response = await fetch(API_URL + "/verifySignature", {
+      method: "POST",
+      body: JSON.stringify({ data, publicKey: pk, signature }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    // Alerting users if there data is being tampared or not
+    if ((await response.json()) === false) {
+      alert("Data has been tampered!!!!!!!");
+    } else {
+      alert("Data is the same");
+    }
+  };
+
+  const RecoverData = async () => {
+    let response = await fetch(API_URL + "/recover", {
+      method: "GET",
+    });
+    let recoveredData = await response.json();
+    setData(recoveredData.data);
   };
 
   return (
@@ -61,6 +89,9 @@ function App() {
         </button>
         <button style={{ fontSize: "20px" }} onClick={verifyData}>
           Verify Data
+        </button>
+        <button style={{ fontSize: "20px" }} onClick={RecoverData}>
+          Recover Data
         </button>
       </div>
     </div>

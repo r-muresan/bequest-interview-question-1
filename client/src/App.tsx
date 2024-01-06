@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const API_URL = "http://localhost:8080";
 
@@ -13,21 +13,22 @@ const generateHash = async (input: string | undefined) => {
 	return hashHex;
 };
 
+const checkHash = async (input: string | undefined, hash: string) => {
+	const expectedHash = await generateHash(input);
+	return hash === expectedHash;
+};
+
 function App() {
 	const [localData, setLocalData] = useState<string>("");
 
-	useEffect(() => {
-		getData();
-	}, []);
+	const getData: () => Promise<{ data: string; hash: string }> =
+		useCallback(async () => {
+			const response = await fetch(API_URL);
+			const { data, hash } = await response.json();
+			return { data, hash };
+		}, []);
 
-	const getData = async () => {
-		const response = await fetch(API_URL);
-		const { data, hash } = await response.json();
-		localStorage.setItem("hash", hash);
-		setLocalData(data);
-	};
-
-	const updateData = async () => {
+	const updateData = useCallback(async () => {
 		const newHash = await generateHash(localData);
 		await fetch(API_URL, {
 			method: "POST",
@@ -38,8 +39,34 @@ function App() {
 			},
 		});
 
-		await getData();
-	};
+		const { data, hash } = await getData();
+		localStorage.setItem("hash", hash);
+		localStorage.setItem("data", data);
+	}, [getData, localData]);
+
+	const getInitialData = useCallback(async () => {
+		const { data, hash } = await getData();
+		if (!await checkHash(data, hash)) {
+      // Recover from localStorage
+			const localStorageData = localStorage.getItem("data");
+			if (localStorageData) {
+				console.log(
+					"Data is not valid, restoring localStorage data:",
+					localStorageData
+				);
+				setLocalData(localStorageData);
+				// updateData();
+			}
+		} else {
+			localStorage.setItem("hash", hash);
+			localStorage.setItem("data", data);
+			setLocalData(data);
+		}
+	}, [getData]);
+
+	useEffect(() => {
+		getInitialData();
+	}, [getInitialData]);
 
 	const verifyData = async () => {
 		const response = await fetch(API_URL);
@@ -47,7 +74,13 @@ function App() {
 		const expectedHash = await generateHash(data);
 		if (hash !== localStorage.getItem("hash") || expectedHash !== hash) {
 			alert("Data is not valid!!");
+		} else {
+			alert("Data is valid!!");
 		}
+	};
+
+	const hackData = async () => {
+		await fetch(API_URL + "/hack");
 	};
 
 	return (
@@ -78,6 +111,9 @@ function App() {
 				</button>
 				<button style={{ fontSize: "20px" }} onClick={verifyData}>
 					Verify Data
+				</button>
+				<button style={{ fontSize: "20px" }} onClick={hackData}>
+					Hack Data
 				</button>
 			</div>
 		</div>

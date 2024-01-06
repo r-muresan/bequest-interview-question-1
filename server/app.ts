@@ -20,6 +20,11 @@ app.post("/", (req, res) => {
 	res.sendStatus(200);
 });
 
+app.get("/hack", (_, res) => {
+	database.data = "Hacked";
+	res.sendStatus(200);
+});
+
 app.listen(PORT, () => {
   console.log("Server running on port " + PORT);
 });

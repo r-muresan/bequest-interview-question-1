@@ -13,12 +13,12 @@ To verify if the client and the server data is not tampered, I followed the foll
 5. In order to verify that the data is not tampered, client will send digital signature and public key to the server and the server verifies if the data is tampered through digital signature
 
 <br />
-**2. If the data has been tampered with, how can the client recover the lost data?**
+**2. If the data has been tampered with, how can the client recover the lost data?** <br/>
 I am using a backup to maintain the historical data. The historical data is backedup after every update request from the client.
 
 ### Demo:
 
-![Demo](bequest.finance.gif)
+![Demo](https://raw.githubusercontent.com/Akhilasulgante/bequest-interview-question-1/main/client/public/bequest.finance.gif)
 
 Edit this repo to answer these two questions using any technologies you'd like, there any many possible solutions. Feel free to add comments.
 

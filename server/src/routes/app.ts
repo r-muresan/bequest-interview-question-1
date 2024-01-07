@@ -1,24 +1,41 @@
 import { UserId } from './../../node_modules/aws-sdk/clients/alexaforbusiness.d'
 import express from 'express'
-import { addUserInfo, getHistoricalInfo } from '../services/data'
+import {
+  addUserInfo,
+  getHistoricalInfo,
+  getUserData,
+  rollbackFromPreviousValue,
+} from '../services/data'
 import { getUserById } from '../services/user'
 import verifyToken from '../middleware/authMiddleware'
-import getSecret from '../aws/secretsManager'
+import { getSecret } from '../aws/secretsManager'
 
 const router = express.Router()
 
 router.use(verifyToken)
 
-router.get('/', function (req, res, next) {
-  res.status(200).json({
-    data: {
-      message: 'Hola',
-    },
-  })
+router.get('/', async (req, res, next) => {
+  try {
+    // @ts-expect-error
+    const userId = req.userId
+
+    const info = await getUserData(userId)
+
+    res.status(200).json({
+      info,
+    })
+  } catch (error: any) {
+    res.status(500).json({
+      error: { message: error.message },
+    })
+  }
 })
 
 router.post('/', async (req, res) => {
-  const { userId, data } = req.body
+  const { data } = req.body
+
+  // @ts-expect-error
+  const userId = req.userId
 
   try {
     const user = await getUserById(userId)
@@ -34,10 +51,8 @@ router.post('/', async (req, res) => {
 
     await addUserInfo(userId, data)
 
-    res.status(204).json({
-      data: {
-        message: 'Information updated succesfully',
-      },
+    res.status(200).json({
+      message: 'Information updated succesfully',
     })
   } catch (error) {
     console.error(error)
@@ -95,6 +110,21 @@ router.get('/verify', async (req, res) => {
     return res.status(200).json(user)
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' })
+  }
+})
+
+router.post('/rollback', async (req, res) => {
+  try {
+    // @ts-expect-error
+    const userId = req.userId
+
+    const { info_id: previousInfoId } = req.body
+
+    const rollbackInfo = rollbackFromPreviousValue(userId, previousInfoId)
+
+    return res.status(200).json(rollbackInfo)
+  } catch (error) {
+    res.status(500).json({ erorr: 'Internal Server Error' })
   }
 })
 

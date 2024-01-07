@@ -9,6 +9,7 @@ CREATE TABLE users (
 CREATE TABLE users_data (
 	user_id VARCHAR,
   info TEXT NOT NULL,
+  info_hash TEXT NOT NULL,
 	created_on TIMESTAMP NOT NULL,
 
   PRIMARY KEY(user_id),

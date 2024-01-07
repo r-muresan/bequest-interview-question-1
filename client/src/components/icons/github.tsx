@@ -1,4 +1,4 @@
-export const GithubIcon = (props: { className: string }) => {
+export const GithubIcon = (props: { className?: string }) => {
   const { className } = props
 
   return (

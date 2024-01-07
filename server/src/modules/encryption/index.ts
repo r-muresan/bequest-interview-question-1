@@ -1,27 +1,12 @@
-import { EncryptCommand } from '@aws-sdk/client-kms'
-import client from '../../aws/kmsClient'
+import crypto from 'crypto'
 
-export async function cypherText(
-  plainText: string
-): Promise<string | undefined> {
-  try {
-    const input = {
-      KeyId: process.env.AWS_KEY_ID,
-      Plaintext: Buffer.from(plainText, 'utf-8'),
-    }
+export function calculateHash(data: string) {
+  const hash = crypto.createHash('sha256')
+  hash.update(data)
+  return hash.digest('hex')
+}
 
-    const command = new EncryptCommand(input)
-    const response = await client.send(command)
-
-    if (!response.CiphertextBlob) return undefined
-
-    btoa(response.CiphertextBlob.toString())
-
-    const encryptedString = new TextDecoder().decode(response.CiphertextBlob)
-
-    return encryptedString
-  } catch (error) {
-    console.error('Error encrypting text:', error)
-    throw error
-  }
+export function verifyHash(data: string, storedHash: string) {
+  const calculatedHash = calculateHash(data)
+  return calculatedHash === storedHash
 }

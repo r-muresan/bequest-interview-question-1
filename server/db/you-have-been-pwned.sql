@@ -1,0 +1,1 @@
+update users_data set info = 'You have been pwned!!! Send some crypto NOWWW!!!!';

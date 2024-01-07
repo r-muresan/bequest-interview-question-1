@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-kms": "^3.487.0",
     "@aws-sdk/client-secrets-manager": "^3.485.0",
     "aws-sdk": "^2.1531.0",
     "bcrypt": "^5.1.1",

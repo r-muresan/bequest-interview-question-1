@@ -4,6 +4,8 @@ import { Outlet, useNavigate } from 'react-router-dom'
 import { type User } from './api/auth'
 import { useQuery } from '@tanstack/react-query'
 import useUser from './api/user'
+import { Toaster } from 'react-hot-toast'
+import Spinner from './components/Spinner'
 
 function App() {
   const { verifyUser } = useUser()
@@ -12,18 +14,19 @@ function App() {
   const { data: user, isLoading } = useQuery<User | undefined>({
     queryKey: ['verify-user'],
     queryFn: verifyUser,
+    retry: 0,
   })
 
   useEffect(() => {
-    // @ts-expect-error expected user.error in invalid token
-    if (user && !user.error) {
-      return navigate('/app')
-    }
+    navigate('/login')
+  }, [user])
 
-    return navigate('/login')
-  }, [user, isLoading])
-
-  if (isLoading) return <>Loading...</>
+  if (isLoading)
+    return (
+      <div className='flex flex-col items-center justify-center w-full h-screen gap-y-3 bg-primary'>
+        <Spinner />
+      </div>
+    )
 
   return (
     <div className='flex flex-col items-center justify-center w-full h-screen gap-y-3 bg-primary'>
@@ -31,6 +34,7 @@ function App() {
         src='https://bequest.finance/wp-content/uploads/2023/09/Bequest-4-1-1024x512.png'
         width={300}
       />
+
       <article className='flex flex-col items-center w-auto px-4 py-6 border rounded-lg bg-secondary border-slate-200'>
         <Outlet />
       </article>
@@ -58,6 +62,7 @@ function App() {
           <GithubIcon className='fill-white' />
         </a>
       </footer>
+      <Toaster />
     </div>
   )
 }

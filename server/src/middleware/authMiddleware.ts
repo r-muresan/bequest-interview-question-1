@@ -1,7 +1,7 @@
 import { message } from './../../node_modules/aws-sdk/clients/customerprofiles.d'
 import jwt from 'jsonwebtoken'
 import { Request, Response, NextFunction } from 'express'
-import getSecret from '../aws/secretsManager'
+import { getSecret } from '../aws/secretsManager'
 
 export default async function verifyToken(
   req: Request,

@@ -20,7 +20,7 @@ export default function Login() {
   }
 
   const onSubmit = async (payload: LoginPayload) => {
-    await mutateAsync({ ...payload })
+    mutateAsync({ ...payload })
 
     if (isError) {
       return toast.error(error.message)

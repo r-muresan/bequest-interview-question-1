@@ -1,7 +1,7 @@
 import express from 'express'
 import { getUserByEmail } from '../services/user'
 import { createUser, loginUser } from '../services/auth'
-import getSecret from '../aws/secretsManager'
+import { getSecret } from '../aws/secretsManager'
 import jwt from 'jsonwebtoken'
 
 const router = express.Router()
@@ -20,6 +20,9 @@ router.post('/register', async (req, res) => {
     }
 
     const user = await createUser(email, password)
+
+    if (!user) return
+
     res.status(201).json(user)
   } catch (error) {
     console.error(error)

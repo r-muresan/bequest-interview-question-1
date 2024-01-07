@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { User, getUserByEmail } from './user'
+import { User, createUserEncryptionKey, getUserByEmail } from './user'
 import { dbClient } from '../modules/db/client'
 import { hashPassword, passwordsMatch } from '../modules/encryption/password'
 
@@ -10,15 +10,22 @@ export async function createUser(
   const client = await dbClient.connect()
   const hashedPassword = await hashPassword(password)
   try {
+    const userId = uuidv4()
     const text =
       'INSERT INTO users(id, email, password) VALUES($1, $2, $3) RETURNING id, email'
-    const values = [uuidv4(), email, hashedPassword]
+    const values = [userId, email, hashedPassword]
+
+    const userSecret = await createUserEncryptionKey(userId)
+
+    if (!userSecret)
+      throw new Error('Something went wrong creating user secret')
 
     const res = await client.query<User>(text, values)
 
     return res.rows[0]
   } catch (error) {
     console.error(error)
+    throw error
   } finally {
     client.release()
   }

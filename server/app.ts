@@ -4,7 +4,7 @@ import CryptoJS from "crypto-js";
 
 const PORT = 8080;
 const app = express();
-const database = { data: "", hashedData: "" };
+let database = { data: "", hashedData: "" };
 
 app.use(cors());
 app.use(express.json());
@@ -22,19 +22,18 @@ const createHashToVerify = async (stringToHash: string) => {
 
 const createBackup = () => {
   const fs = require("fs");
-
-  const jsonData = JSON.stringify(database);
+  const jsonData = JSON.stringify(database.hashedData);
   fs.writeFileSync("backup.json", jsonData);
-
-  console.log("Backup successful");
 };
 
 const restoreFromBackup = () => {
   const fs = require("fs");
   const backupData = fs.readFileSync("backup.json", "utf-8");
   const restoredData = JSON.parse(backupData);
-  console.log("Restored the backup");
+  database = restoredData
+  console.log("Restored the backup ");
 };
+
 
 // Routes
 
@@ -54,6 +53,12 @@ app.post("/verify", async (req, res) => {
   const hashedString = await createHashToVerify(receivedData);
   const isMatch = hashedString === database.hashedData;
   res.send(isMatch);
+});
+
+app.post("/restore", async (req, res) => {
+  restoreFromBackup();
+  console.log(database.data);
+  res.sendStatus(200);
 });
 
 app.listen(PORT, () => {

@@ -16,7 +16,7 @@ function App() {
   };
 
   const updateData = async () => {
-    await fetch(API_URL, {
+    await fetch(API_URL + "/update", {
       method: "POST",
       body: JSON.stringify({ data }),
       headers: {
@@ -29,7 +29,28 @@ function App() {
   };
 
   const verifyData = async () => {
-    throw new Error("Not implemented");
+    try {
+      const response = await fetch(API_URL + "/verify", {
+        method: "POST",
+        body: JSON.stringify({ data }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const isMatch = await response.json(); // Get the boolean value from the response
+      if(isMatch){
+        alert("Verification passed");
+      }
+      else{
+        alert("Verification failed");
+      }
+    } catch (error) {
+      console.error("Error in verifying data:", error);
+    }
   };
 
   return (

@@ -34,11 +34,11 @@ app.post("/", (req, res) => {
   res.sendStatus(200);
 });
 
-const httpsOptions = {
+const httpsOptions = { //certificates that I myself created for this protocol
   key: fs.readFileSync('./certs/cert.key'),
   cert: fs.readFileSync('./certs/cert.crt'),
 };
 
-https.createServer(httpsOptions, app).listen(PORT, () => {
+https.createServer(httpsOptions, app).listen(PORT, () => { //created and https server
   console.log("Server running on port " + PORT);
 });

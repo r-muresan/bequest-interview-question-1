@@ -14,7 +14,13 @@ Edit this repo to answer these two questions using any technologies you'd like, 
 ### To run the apps:
 ```npm run start``` in both the frontend and backend
 
+### To run the solution
+1. Start the Backend Server `npm i && npm run start`
+2. Start the Frontend Server `npm i && npm run start`
+3. Copy the CLIENT_KEY (DEC7ECA8DA1ABDB239FE97F3766C5) from backend server log and paste in the alert box of frontend. ( The idea is to share the CLIENT_KEY to the end customer securely to valid and handle security to ensure the asset is only updated by the user and server)
+
+
 ## To make a submission:
-1. Clone the repo
+1. Clone the repo 
 2. Make a PR with your changes in your repo
 3. Email your github repository to robert@bequest.finance

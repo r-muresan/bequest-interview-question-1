@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import bcrypt from "bcryptjs";
 
-const API_URL = "http://localhost:8080";
+const API_URL = "https://localhost:8080";
 
 function App() {
   const [data, setData] = useState<string>("");

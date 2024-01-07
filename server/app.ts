@@ -1,11 +1,22 @@
 import express from "express";
 import cors from "cors";
+import https from "https"
+import fs from "fs"
 
 const PORT = 8080;
 const app = express();
 const database = { data: "Hello World" };
+const allowedOrigins = ["http://localhost:3000"]; //whitelisting only myself for additional security
 
-app.use(cors());
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS does not allow this origin to call to this server"));
+    }
+  },
+}));
 app.use(express.json());
 
 // Routes
@@ -23,6 +34,11 @@ app.post("/", (req, res) => {
   res.sendStatus(200);
 });
 
-app.listen(PORT, () => {
+const httpsOptions = {
+  key: fs.readFileSync('./certs/cert.key'),
+  cert: fs.readFileSync('./certs/cert.crt'),
+};
+
+https.createServer(httpsOptions, app).listen(PORT, () => {
   console.log("Server running on port " + PORT);
 });

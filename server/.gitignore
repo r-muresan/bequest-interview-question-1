@@ -18,6 +18,9 @@
 .env.test.local
 .env.production.local
 
+# certificates for https
+/certs
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

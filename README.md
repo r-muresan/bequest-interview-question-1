@@ -5,7 +5,7 @@ Only the user can update their data.
 
 
 **1. How does the client ensure that their data has not been tampered with? Assume that the database is compromised.**
-    Each time the client inputs data, the server stores a SHA-256 hash of that data rather than the raw information. Consequently, when the client submits new data, a distinct hash for the corresponding information is stored on the server.
+    Each time the client inputs data, the server stores a SHA-256 hash of that data rather than the raw information. Consequently, when the client submits new data, a distinct hash for the corresponding information is stored on the server. When the client initiates data verification, a match between the hash of the provided data and the stored hash on the server assures the client of data integrity, indicating that there has been no compromise.
 <br />
 **2. If the data has been tampered with, how can the client recover the lost data?**
     Each time clients input new data, a backup is generated and stored. This ensures that in the event of data compromise, clients can easily revert to the original information at any time in the future. I've incorporated a dedicated button for this functionality in the user interface (UI).

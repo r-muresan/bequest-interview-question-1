@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import github from '/icons/github.svg'
 import { GithubIcon } from './components/icons/github'
 
-const API_URL = 'http://localhost:8080'
-
-interface FormProps {
-  onSubmit: (data: FormData) => void
-}
-
+const API_URL = 'http://localhost:4000'
 interface FormData {
   data: string
 }
@@ -67,7 +61,7 @@ function App() {
         <form className='flex flex-col w-full gap-y-3' onSubmit={handleSubmit}>
           <input
             className='p-2 text-xl border border-gray-500'
-            placeholder='Write down some data...'
+            placeholder='Write down your personal info...'
             type='text'
             name='data'
             value={formData.data}

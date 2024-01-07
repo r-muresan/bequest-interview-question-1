@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+  system-db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${APP_DB_USER}
+      - POSTGRES_PASSWORD=${APP_DB_PASSWORD}
+      - POSTGRES_DB=${APP_DB_NAME}
+    ports:
+      - '5432:5432'
+    volumes:
+      - system-db:/var/lib/postgresql/data
+      - ./db/system-db-init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  history-db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${HISTORY_DB_USER}
+      - POSTGRES_PASSWORD=${HISTORY_DB_PASSWORD}
+      - POSTGRES_DB=${HISTORY_DB_NAME}
+    ports:
+      - '5433:5432'
+    volumes:
+      - history-db:/var/lib/postgresql/data
+      - ./db/history-db-init.sql:/docker-entrypoint-initdb.d/init.sql
+volumes:
+  system-db:
+    driver: local
+  history-db:
+    driver: local

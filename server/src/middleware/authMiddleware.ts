@@ -14,7 +14,6 @@ export default async function verifyToken(
 
   const token = authorizationHeader.split(' ')[1]
 
-  console.log({ token })
   const secretKey = await getSecret(process.env.AWS_SESSION_SECRET_NAME!)
 
   if (!secretKey)

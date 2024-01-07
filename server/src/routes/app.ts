@@ -3,6 +3,7 @@ import express from 'express'
 import { addUserInfo, getHistoricalInfo } from '../services/data'
 import { getUserById } from '../services/user'
 import verifyToken from '../middleware/authMiddleware'
+import getSecret from '../aws/secretsManager'
 
 const router = express.Router()
 
@@ -70,6 +71,30 @@ router.get('/historical', async (req, res) => {
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: { message: 'Internal Server Error' } })
+  }
+})
+
+router.get('/verify', async (req, res) => {
+  try {
+    const secretKey = await getSecret(process.env.AWS_SESSION_SECRET_NAME!)
+
+    if (!secretKey)
+      throw new Error('Something went wrong getting secrets from AWS.')
+
+    // @ts-ignore
+    const user = await getUserById(req.userId)
+
+    if (!user) {
+      return res.status(404).json({
+        error: {
+          message: 'User Not Found',
+        },
+      })
+    }
+
+    return res.status(200).json(user)
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' })
   }
 })
 

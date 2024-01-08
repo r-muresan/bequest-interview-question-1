@@ -13,6 +13,7 @@ Edit this repo to answer these two questions using any technologies you'd like, 
 
 ### To run the apps:
 ```npm i``` in both the frontend and backend to install dependencies
+<br />
 ```npm run start``` in both the frontend and backend to start the apps
 
 ## To make a submission:

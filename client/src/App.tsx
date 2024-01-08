@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import bcrypt from "bcryptjs";
 
-const API_URL = "https://localhost:8080";
+const API_URL = "https://localhost:8080"; //turned this into an https server for enhanced security when delivering data.
 
 function App() {
   const [data, setData] = useState<string>("");
@@ -11,33 +11,67 @@ function App() {
   //   getData();
   // }, []);
 
-  const getData = async () => {
+  const handleStorageStatusMessage = (message: string) => {
+    setStatusMessage(message);
+    setData(""); // Reset the data in the input textbox
+    setTimeout(() => {
+      // Erase the message after 3 seconds
+      setStatusMessage(null);
+    }, 3000);
+  }
 
+  const backupData = async () => {
     try{
-      const response = await fetch(API_URL);
-      const { data: responseData} = await response.json();
+      //console.log("backing up")
+      const response = await fetch(`${API_URL}/backup-data`, {
+        method: "POST",
+          headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json; charset=utf-8",
+          },
+      });
+      if (response.ok){
+        handleStorageStatusMessage("Data storage successful");
+      } else{
+        handleStorageStatusMessage("WARN: data received but failure to make backup copy");
+      }
+    
+    } catch (error){
+      console.error("Error during API call:", error);
+      handleStorageStatusMessage("ERROR: error during backup")
+    }
+  }
 
-      bcrypt.compare(data, responseData, function(err: Error, isMatch: boolean){
-        if(err){
-          throw err;
-        } else if(!isMatch){
-          console.log("data tampered during transit")
-          setStatusMessage("Data tampered during transit. Contact someone for help!");
-        } else {
-          console.log("data successfully stored")
-          setStatusMessage("Data successfully stored");
-          setData(""); // Reset the data in the input textbox
-
-          setTimeout(() => { //erase the message after 3 secconds
-            setStatusMessage(null);
-          }, 3000);
-        }
-
-      })
+  const getData = async (url: string): Promise<boolean> => {
+    let getStatus = false;
+  
+    try {
+      const response = await fetch(url);
+      const { data: responseData } = await response.json();
+  
+      await new Promise<void>((resolve, reject) => {
+        bcrypt.compare(data, responseData, (err: Error, isMatch: boolean) => {
+          if (err) {
+            reject(err);
+          } else if (!isMatch) {
+            console.log("data tampered");
+            getStatus = false;
+            resolve();
+          } else {
+            console.log("good to go")
+            getStatus = true;
+            resolve();
+          }
+        });
+      });
+  
+      return getStatus;
+  
     } catch (error) {
       console.error("ERROR: unsuccessful fetch or parse from server", error);
+      getStatus = false;
+      return getStatus;
     }
-    
   };
 
   const updateData = async () => {
@@ -45,40 +79,89 @@ function App() {
     //chose to hash data so that only the server and the user know the data
     //data can not even be seen by bequest finance team
     const salt = bcrypt.genSaltSync(10); //used default 10 saltrounds for now
-    console.log('data',data)
     const hashedData = bcrypt.hashSync(data, salt)
-
-    console.log(hashedData)
 
     try {
       const response = await fetch(API_URL, {
           method: "POST",
           body: JSON.stringify({ hashedData }),
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json; charset=utf-8",
-            },
+          headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json; charset=utf-8",
+          },
       });
 
       if (response.ok) {
-          console.log("API call successful");
+        console.log("API call successful");
       } else {
-          console.error("API call failed");
+        handleStorageStatusMessage("ERROR: failure to connect to server")
+        console.error("API call failed");
       }
 
     } catch (error) {
+      handleStorageStatusMessage("ERROR: failure to connect to server")
       console.error("Error during API call:", error);
     }
 
-    //for sanity check at the moment
-    window.localStorage.setItem('data',hashedData)
+    const getStatus = await getData(API_URL); //this will check the data received against the data you're inputting
 
-    await getData();
+    if (getStatus){
+      await backupData()
+    } else {
+      handleStorageStatusMessage("URGENT: Data tampered/compromised!")
+    }
   };
+
+  const restoreData = async ()=>{
+    try {
+      const response = await fetch(`${API_URL}/restore-data`, {
+          method: "POST",
+          headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json; charset=utf-8",
+          },
+      });
+
+    } catch (error) {
+      handleStorageStatusMessage("ERROR: failure to connect to server")
+      console.error("Error during API call:", error);
+    }
+
+  }
 
   const verifyData = async () => {
-    throw new Error("Not implemented");
+
+    const getStatus = await getData(API_URL)
+    if (getStatus){
+      handleStorageStatusMessage("Data Verification: SUCCESS")
+    } else {
+      handleStorageStatusMessage("Sensitive Data not matching. Checking for tampering...")
+      
+      const backupStatus = await getData(`${API_URL}/backup-data`)
+      if (backupStatus){
+        //call to the restore api
+        await restoreData()
+        //for users that entered data that matches backup copy, then we deduce that the "live" database is faulty and use the backup to restore their information
+        handleStorageStatusMessage("Data you entered matches previous records - Looks like we are able to restore the data for you!")
+      } else {
+        //if the user is attempting to enter data that does not match the backup copy, then I assume that they aren't the correct user
+        handleStorageStatusMessage("Your information does not match anything the system remembers. Please contact us for help.")
+
+      }
+
+    }
   };
+
+  //easy way to mess with the live database and show that the backup copy kicks in.
+  const tamperLiveDb = async () =>{
+    await fetch(`${API_URL}/tamper-live-db`, {
+      method: "POST",
+      headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json; charset=utf-8",
+      },
+    });
+  }
 
   return (
     <div
@@ -113,6 +196,12 @@ function App() {
       </div>
 
       <div style={{ fontSize: "20px", color: "red" }}>{statusMessage}</div>
+
+      <div>
+      <button style={{ fontSize: "20px" }} onClick={tamperLiveDb}>
+          Tamper Live DB
+        </button>
+      </div>
 
     </div>
   );

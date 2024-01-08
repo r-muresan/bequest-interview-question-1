@@ -34,6 +34,35 @@ app.post("/", (req, res) => {
   res.sendStatus(200);
 });
 
+app.get("/backup-data", (req, res)=>{
+    const backupsFile = fs.readFileSync('backup-copy.json', 'utf-8');
+    const backupDataCopy = JSON.parse(backupsFile);
+    res.json(backupDataCopy);
+})
+
+app.post("/backup-data", (req, res) => { //only backs up the one relevant piece of data, does not keep a log
+  try {
+    const backupDataCopy = {timestamp: new Date(), data: database.data}
+    fs.writeFileSync('backup-copy.json', JSON.stringify(backupDataCopy, null, 2), 'utf-8');
+    res.sendStatus(200);
+  
+  } catch (error) {
+    console.error('Error writing backup data:', error);
+    res.status(500).json({ success: false, error: 'Internal server error at the try-catch' });
+  }
+});
+
+app.post("/restore-data", (req, res)=>{
+  const backupsFile = fs.readFileSync('backup-copy.json', 'utf-8');
+  const backupDataCopy = JSON.parse(backupsFile);
+  database.data = backupDataCopy.data
+  res.json(backupDataCopy.timestamp); //if you ever need the timestamp for whatever reason
+})
+
+app.post("/tamper-live-db", (req, res)=>{
+  database.data = "aaaaaaaah haha you have officially been messed with"
+})
+
 const httpsOptions = { //certificates that I myself created for this protocol
   key: fs.readFileSync('./certs/cert.key'),
   cert: fs.readFileSync('./certs/cert.crt'),

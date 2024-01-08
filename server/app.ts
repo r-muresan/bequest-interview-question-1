@@ -21,6 +21,7 @@ app.use(express.json());
 
 // Routes
 
+//regular get and post
 app.get("/", (req, res) => {
   console.log("database", database)
   res.json(database);
@@ -34,6 +35,7 @@ app.post("/", (req, res) => {
   res.sendStatus(200);
 });
 
+//dealing with the backup system
 app.get("/backup-data", (req, res)=>{
     const backupsFile = fs.readFileSync('backup-copy.json', 'utf-8');
     const backupDataCopy = JSON.parse(backupsFile);
@@ -59,6 +61,7 @@ app.post("/restore-data", (req, res)=>{
   res.json(backupDataCopy.timestamp); //if you ever need the timestamp for whatever reason
 })
 
+//THIS IS FOR DEVS FOR TEST ONLY: easy way to tamper with the live db to show that the backup copy works
 app.post("/tamper-live-db", (req, res)=>{
   database.data = "aaaaaaaah haha you have officially been messed with"
 })

@@ -11,6 +11,7 @@ function App() {
   //   getData();
   // }, []);
 
+  //setting timed UI message to show user messages about their data storage and verification
   const handleStorageStatusMessage = (message: string) => {
     setStatusMessage(message);
     setData(""); // Reset the data in the input textbox
@@ -20,6 +21,7 @@ function App() {
     }, 3000);
   }
 
+  //request to server to backup data when relevant
   const backupData = async () => {
     try{
       //console.log("backing up")
@@ -42,6 +44,7 @@ function App() {
     }
   }
 
+  //getting data from server
   const getData = async (url: string): Promise<boolean> => {
     let getStatus = false;
   
@@ -74,6 +77,7 @@ function App() {
     }
   };
 
+  //updating server data
   const updateData = async () => {
 
     //chose to hash data so that only the server and the user know the data
@@ -112,6 +116,7 @@ function App() {
     }
   };
 
+  //requesting that the server use the backup copy to restore the live copy
   const restoreData = async ()=>{
     try {
       const response = await fetch(`${API_URL}/restore-data`, {
@@ -129,6 +134,7 @@ function App() {
 
   }
 
+  //checking if your data in the live database is still alright, if there is a problem, then the backup copy will kick in only if you match the backup copy.
   const verifyData = async () => {
 
     const getStatus = await getData(API_URL)
@@ -152,7 +158,7 @@ function App() {
     }
   };
 
-  //easy way to mess with the live database and show that the backup copy kicks in.
+  //THIS IS FOR DEVS FOR TESTING ONLY: easy way to mess with the live database and show that the backup copy kicks in the next time you hit verify
   const tamperLiveDb = async () =>{
     await fetch(`${API_URL}/tamper-live-db`, {
       method: "POST",

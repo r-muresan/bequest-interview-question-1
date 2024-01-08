@@ -11,7 +11,31 @@ const startHash = crypto
   .update(JSON.stringify(startData))
   .digest("hex");
 
+type dataVersionsType = {
+  [key: string]: {
+    data: string,
+    hash: string,
+  }
+};
+
 const database = { data: "Hello World", hash: startHash };
+const dataVersions: dataVersionsType = {}; // e.g. "timestamp": { data, hash };
+
+// stores a version of the current database with a timestamp
+const storeDataVersion = () => {
+  const timestamp = new Date().toISOString();
+  dataVersions[timestamp] = { ...database };
+  console.log("data version dict: ", dataVersions);
+};
+
+// restores the database to a selected version
+const restoreDataVersion = (timestamp: string) => {
+  const versionToRestore = dataVersions[timestamp];
+  if (versionToRestore) {
+    database.data = versionToRestore.data;
+    database.hash = versionToRestore.hash;
+  }
+};
 
 app.use(cors());
 app.use(express.json());
@@ -19,7 +43,21 @@ app.use(express.json());
 // Routes
 
 app.get("/", (req, res) => {
-  res.json(database);
+  try {
+    res.json(database);
+  } catch(error) {
+    console.error("Error getting database:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.get("/backup-data", (req, res) => {
+  try {
+    res.json(dataVersions);
+  } catch(error) {
+    console.error("Error getting backup data:", error);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 app.get("/verify-data", async (req, res) => {
@@ -54,6 +92,7 @@ app.post("/", (req, res) => {
     try {
       database.data = data;
       database.hash = hash;
+      storeDataVersion();
       res.sendStatus(200);
     } catch (error) {
       console.error("Error updating data:", error);

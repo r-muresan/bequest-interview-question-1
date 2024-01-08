@@ -1,9 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import Message from "./Message";
 
 const API_URL = "http://localhost:8080";
 
+const bcrypt = require('bcryptjs');
+const saltRounds = 10;
+
 function App() {
+  const previousDataRef = useRef();
   const [data, setData] = useState<string>();
+  const [hash, setHash] = useState<string>();
+  const [showMessage, setShowMessage] = useState<boolean>(false);
+  const [isVerified, setIsVerified] = useState<boolean>(false);
 
   useEffect(() => {
     getData();
@@ -11,14 +19,23 @@ function App() {
 
   const getData = async () => {
     const response = await fetch(API_URL);
-    const { data } = await response.json();
+    const { data, hash } = await response.json();
     setData(data);
+    previousDataRef.current = data; // save data for change long in case of update
+    setHash(hash);
   };
 
   const updateData = async () => {
+    setShowMessage(false);
+    const hash = bcrypt.hashSync(data, saltRounds); // hash data to record authorized change
+    const changeLog = {
+      date: new Date(),
+      oldData: previousDataRef.current,
+      newData: data,
+    }
     await fetch(API_URL, {
       method: "POST",
-      body: JSON.stringify({ data }),
+      body: JSON.stringify({ data, hash, changeLog }),
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -28,8 +45,14 @@ function App() {
     await getData();
   };
 
-  const verifyData = async () => {
-    throw new Error("Not implemented");
+  const verifyData = async () => {    
+    // Compare hashes and determine if data has been tampered with or not
+    if (bcrypt.compareSync(data, hash)) {
+      setIsVerified(true);
+    } else {
+      setIsVerified(false);
+    }
+    setShowMessage(true);
   };
 
   return (
@@ -63,6 +86,7 @@ function App() {
           Verify Data
         </button>
       </div>
+      { showMessage ? <Message verified={isVerified} /> : null }
     </div>
   );
 }

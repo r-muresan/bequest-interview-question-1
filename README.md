@@ -12,7 +12,8 @@ Only the user is able to update their own data.
 Edit this repo to answer these two questions using any technologies you'd like, there any many possible solutions. Feel free to add comments.
 
 ### To run the apps:
-```npm run start``` in both the frontend and backend
+```npm i``` in both the frontend and backend to install dependencies
+```npm run start``` in both the frontend and backend to start the apps
 
 ## To make a submission:
 1. Clone the repo

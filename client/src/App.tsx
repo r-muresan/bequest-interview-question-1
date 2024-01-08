@@ -20,16 +20,22 @@ function App() {
     // compute hash of data
     const hash = CryptoJS.SHA256(JSON.stringify(data)).toString();
 
-    await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({ data, hash }),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-
-    await getData();
+    try {
+      await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({ data, hash }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+  
+      alert(`Data updated successfully to: ${data}`);
+      await getData();
+    } catch (error) {
+      console.error('Error updating data:', error);
+      alert("Error updating data, check console.");
+    }
   };
 
   const verifyData = async () => {
@@ -37,7 +43,13 @@ function App() {
       const response = await fetch(`${API_URL}/verify-data`);
       const result = await response.json();
 
-      console.log(result);
+      // use alerts to notify data verification status
+      if (result.verified) {
+        alert("Data is verified and intact.");
+      } else {
+        alert("Data verification failed. Possible tampering detected.");
+      }
+
     } catch (error) {
       console.error('Error verifying data:', error);
     }

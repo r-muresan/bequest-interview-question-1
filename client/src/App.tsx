@@ -1,35 +1,52 @@
+// App.tsx
+
 import React, { useEffect, useState } from "react";
+import { SHA256 } from "crypto-js";
 
 const API_URL = "http://localhost:8080";
 
 function App() {
   const [data, setData] = useState<string>();
+  const [version, setVersion] = useState<number>(1);
+  const [shouldFetchData, setShouldFetchData] = useState<boolean>(false);
+
 
   useEffect(() => {
-    getData();
-  }, []);
+    if (shouldFetchData) {
+      getData();
+      setShouldFetchData(false); // Reset to avoid fetching again
+    }
+  }, [shouldFetchData]);
 
   const getData = async () => {
-    const response = await fetch(API_URL);
-    const { data } = await response.json();
-    setData(data);
+    try {
+      const response = await fetch(`${API_URL}?version=${version}`);
+      const { data, version: newVersion } = await response.json();
+      setData(data);
+      setVersion(newVersion);
+      console.log("Current state after setVersion:", { data, version });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   const updateData = async () => {
+    const newData = data || "";
+    const checksum = SHA256(newData).toString();
+     // Log the payload being sent to the server
+    console.log("Request Payload:", { data: newData, checksum });
+
     await fetch(API_URL, {
       method: "POST",
-      body: JSON.stringify({ data }),
+      body: JSON.stringify({ data: newData, checksum }),
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
     });
+    setVersion((prevVersion) => prevVersion + 1);
 
-    await getData();
-  };
-
-  const verifyData = async () => {
-    throw new Error("Not implemented");
+    setShouldFetchData(true);
   };
 
   return (
@@ -58,9 +75,6 @@ function App() {
       <div style={{ display: "flex", gap: "10px" }}>
         <button style={{ fontSize: "20px" }} onClick={updateData}>
           Update Data
-        </button>
-        <button style={{ fontSize: "20px" }} onClick={verifyData}>
-          Verify Data
         </button>
       </div>
     </div>

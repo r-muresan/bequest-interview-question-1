@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
+import sha256 from "crypto-js/sha256";
+import encHex from "crypto-js/enc-hex";
 
 const API_URL = "http://localhost:8080";
 
 function App() {
   const [data, setData] = useState<string>();
+  const [hash, setHash] = useState<string>();
 
   useEffect(() => {
     getData();
@@ -11,14 +14,21 @@ function App() {
 
   const getData = async () => {
     const response = await fetch(API_URL);
-    const { data } = await response.json();
+    const { data, hash } = await response.json();
     setData(data);
+    setHash(hash);
   };
 
   const updateData = async () => {
+    if (data === undefined) {
+      return;
+    }
+
+    const newData = data;
+    const newHash = sha256(newData).toString(encHex);
     await fetch(API_URL, {
       method: "POST",
-      body: JSON.stringify({ data }),
+      body: JSON.stringify({ data: newData, hash: newHash }),
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -29,7 +39,16 @@ function App() {
   };
 
   const verifyData = async () => {
-    throw new Error("Not implemented");
+    if (data === undefined || hash === undefined) {
+      return;
+    }
+
+    const currentHash = sha256(data).toString(encHex);
+    if (currentHash === hash) {
+      alert("Data integrity verified!");
+    } else {
+      alert("Data integrity verification failed");
+    }
   };
 
   return (

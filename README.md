@@ -11,7 +11,6 @@ In this implementation:
 
 This also verifies that the data has not been tampered with during transmission. While this checks for data integrity during transmission, it does not protect against man-in-the-middle (MITM) attacks. To protect against those, the communication channel must be secured. This can be done by encrypting communication between client and server which is typically done by using HTTPS. This requires a TLS/SSL certificate which I am not comfortable generating and sending online.
 
-<br />
 **2. If the data has been tampered with, how can the client recover the lost data?**
 
 In the event that the data has been tampered with, the user can recover lost data in a number of ways. In this implementation:

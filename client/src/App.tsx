@@ -4,6 +4,7 @@ const API_URL = "http://localhost:8080";
 
 function App() {
   const [data, setData] = useState<string>();
+  const [verify, setVerify] = useState<any>(<div></div>)
 
   useEffect(() => {
     getData();
@@ -39,11 +40,27 @@ function App() {
     })
 
     const bool = await res.json();
-
-    if (bool) {
-      
+    console.log(bool);
+    if (bool === 'true') {
+      setVerify(
+        <div
+          style={{
+            color: 'red'
+          }}
+        >
+          <p>verification successful</p>
+        </div>
+      )
     } else {
-      throw new Error("Unverified Data");
+            setVerify(
+        <div
+          style={{
+            color: 'red'
+          }}
+        >
+          <p>fail</p>
+        </div>
+      )
     }
   };
 
@@ -78,6 +95,7 @@ function App() {
           Verify Data
         </button>
       </div>
+      {verify}
     </div>
   );
 }

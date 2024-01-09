@@ -48,6 +48,29 @@ function App() {
       alert("Data integrity verified!");
     } else {
       alert("Data integrity verification failed");
+
+      const backupData = data;
+
+      const userInput = prompt("Please enter the correct data: ");
+
+      if (userInput !== null) {
+        setData(userInput);
+        const updatedHash = sha256(userInput).toString(encHex);
+
+        await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({ data: userInput, hash: updatedHash }),
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        });
+
+        await getData();
+      } else {
+        setData(backupData);
+        console.log("User canceled data update. Restored backup data.");
+      }
     }
   };
 

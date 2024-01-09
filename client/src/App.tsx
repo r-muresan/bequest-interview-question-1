@@ -29,7 +29,22 @@ function App() {
   };
 
   const verifyData = async () => {
-    throw new Error("Not implemented");
+    const res = await fetch(`${API_URL}/verify`, {
+      method: "PATCH",
+      body: JSON.stringify({ data }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+
+    const bool = await res.json();
+
+    if (bool) {
+      
+    } else {
+      throw new Error("Unverified Data");
+    }
   };
 
   return (

@@ -4,7 +4,8 @@ const API_URL = "http://localhost:8080";
 
 function App() {
   const [data, setData] = useState<string>();
-  const [verify, setVerify] = useState<any>(<div></div>)
+  const [verify, setVerify] = useState<any>(<div></div>);
+  const [restore, setRestore] = useState<boolean>(false);
 
   useEffect(() => {
     getData();
@@ -14,6 +15,7 @@ function App() {
     const response = await fetch(API_URL);
     const { data } = await response.json();
     setData(data);
+    setVerify(<div></div>);
   };
 
   const updateData = async () => {
@@ -25,13 +27,23 @@ function App() {
         "Content-Type": "application/json",
       },
     });
-
+    setVerify(<div></div>);
     await getData();
   };
 
+  const restoreData = async () => {
+    setRestore(true);
+
+    const res = await fetch(`${API_URL}/restore`, {
+      method: "get",
+    })
+    const history = await res.json();
+    console.log(history)
+  }
+
   const verifyData = async () => {
-    const res = await fetch(`${API_URL}/verify`, {
-      method: "PATCH",
+    const res = await fetch(`${API_URL}/restore`, {
+      method: "get",
       body: JSON.stringify({ data }),
       headers: {
         Accept: "application/json",
@@ -40,7 +52,6 @@ function App() {
     })
 
     const bool = await res.json();
-    console.log(bool);
     if (bool === 'true') {
       setVerify(
         <div
@@ -94,8 +105,14 @@ function App() {
         <button style={{ fontSize: "20px" }} onClick={verifyData}>
           Verify Data
         </button>
+
+        <button style={{ fontSize: "20px" }} onClick={restoreData}>Restore Data</button>
       </div>
       {verify}
+      <dialog open={restore}>
+        hello world
+        <button onClick={() => setRestore(false)}></button>
+      </dialog>
     </div>
   );
 }

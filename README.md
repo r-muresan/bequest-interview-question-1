@@ -21,8 +21,6 @@ In the event that the data has been tampered with, the user can recover lost dat
 
 Typically in cases of the database being compromised, there are a large number of steps that need to be taken to discover the cause and patch security breaches. In the context of this question though, keeping consistent backups to recover the database is probably the best way to handle lost/compromised data. Apart from backups, a database that also stores transactions would be useful to create an audit trail to recreate the database to a state prior to it being compromised.
 
-Edit this repo to answer these two questions using any technologies you'd like, there any many possible solutions. Feel free to add comments.
-
 ### To run the apps:
 
 `npm run start` in both the frontend and backend

@@ -11,9 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 const hexHistory : { [key:string]: any } = [];
-  //ordered history of hexes with changes logged
-// const history : { [key:string]: any } = {}
-  //use hex as key. Value = the original string data
+  //ordered history of hexes with timestamps logged
 //these are ideally stored somewhere else, like another database and/or user profile, and not the server. 
 
 // utility functions - 
@@ -37,9 +35,8 @@ const storeHistory = async (data: any) => {
 
 storeHistory(database);
 
-
 // Routes
-app.get("/data", async (req, res) => {
+app.get("/", async (req, res) => {
   await res.json(database);
 });
 
@@ -52,11 +49,15 @@ app.patch("/verify", async (req, res) => {
   const current = sha256(database.data);
   await incoming === current ? res.json('true') : res.json('false');
 }) 
-  // what if data is returned for whatever reason?
-    //how do i keep track of changes then?
 
-app.post("/:stuff", (req, res) => {
-  database.data = req.params.stuff
+app.patch("/", async (req, res) => {
+  database.data = req.body.data;
+  storeHistory(database);
+  res.sendStatus(200);
+}) 
+
+app.post("/:data", (req, res) => {
+  database.data = req.params.data
   storeHistory(database);
   res.sendStatus(200);
 });

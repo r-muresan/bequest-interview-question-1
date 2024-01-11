@@ -25,7 +25,7 @@ const storeHistory = async (data: any) => {
   const info = {
     hex,
     createdOn: new Date(),
-    data
+    name: data.data
   }
 
   hexHistory.push(info);
@@ -56,8 +56,10 @@ app.patch("/", async (req, res) => {
 }) 
 
 app.post("/:data", (req, res) => {
+  console.log(database.data);
   database.data = req.params.data
   storeHistory(database);
+  console.log(database.data);
   res.sendStatus(200);
 });
 

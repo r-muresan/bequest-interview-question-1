@@ -6,6 +6,8 @@ function App() {
   const [data, setData] = useState<string>();
   const [verify, setVerify] = useState<any>(<div></div>);
   const [restore, setRestore] = useState<boolean>(false);
+  const [history, setHistory] = useState<any>([]);
+  const [historyCount, setHistoryCount] = useState<number>(0);
 
   useEffect(() => {
     getData();
@@ -15,63 +17,105 @@ function App() {
     const response = await fetch(API_URL);
     const { data } = await response.json();
     setData(data);
-    setVerify(<div></div>);
+    restoreData();
   };
 
   const updateData = async () => {
-    await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({ data }),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-    setVerify(<div></div>);
-    await getData();
+    if (data && data.length) {
+      await fetch(API_URL, {
+        method: "PATCH",
+        body: JSON.stringify({ data }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+      setVerify(<div></div>);
+      await getData();
+      
+    } else {
+      setVerify(
+          <div style={{ color: 'red' }}>
+            <p>need additional data</p>
+          </div>
+        )
+    }
   };
 
   const restoreData = async () => {
-    setRestore(true);
-
     const res = await fetch(`${API_URL}/restore`, {
       method: "get",
     })
-    const history = await res.json();
-    console.log(history)
+    const historyData = await res.json();
+    setHistory(historyData);
+    setHistoryCount(historyData.length - 1);
   }
 
-  const verifyData = async () => {
-    const res = await fetch(`${API_URL}/restore`, {
-      method: "get",
-      body: JSON.stringify({ data }),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
+  const forward = () => {
+    if (historyCount < history.length - 1) setHistoryCount(historyCount + 1);
+  }
+  const back = () => {
+    if (historyCount >= 1) setHistoryCount(historyCount - 1);
+  }
+  const save = async () => {
+    // if (restore) setData(history[historyCount].name);
+    await fetch(`${API_URL}/${history[historyCount].name}`, {
+      method: "POST",
     })
+    await restoreData();
+    await getData();
+    setRestore(false);
+  }
 
-    const bool = await res.json();
-    if (bool === 'true') {
-      setVerify(
-        <div
-          style={{
-            color: 'red'
-          }}
-        >
-          <p>verification successful</p>
+  const displayHistory = () => {
+    if (history.length) {
+      return (
+        <div>
+          <p>{history[historyCount].createdOn}</p>
+          <p>{history[historyCount].name}</p>
+          <p>{history[historyCount].hex}</p>
+  
+          <button onClick={back}>Back</button>
+          <button onClick={forward}>Forward</button>
+          <button onClick={save}>Save</button>
         </div>
       )
     } else {
-            setVerify(
-        <div
-          style={{
-            color: 'red'
-          }}
-        >
-          <p>fail</p>
-        </div>
-      )
+      return (<div></div>)
+    }
+  }
+
+  const verifyData = async () => {
+    if (data && data.length) {
+      const res = await fetch(`${API_URL}/verify`, {
+        method: "PATCH",
+        body: JSON.stringify({ data }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+  
+      const bool = await res.json();
+      if (bool === 'true') {
+        setVerify(
+          <div style={{color: 'red'}}>
+            <p>verification successful</p>
+          </div>
+        )
+      } else {
+        setVerify(
+          <div style={{ color: 'red' }}>
+            <p>unverified data</p>
+          </div>
+        )
+      }
+    } else {
+      setVerify(
+          <div style={{ color: 'red' }}>
+            <p>need additional data</p>
+          </div>
+        )
     }
   };
 
@@ -93,6 +137,7 @@ function App() {
       <div>Saved Data</div>
       <input
         style={{ fontSize: "30px" }}
+        id="input"
         type="text"
         value={data}
         onChange={(e) => setData(e.target.value)}
@@ -106,13 +151,15 @@ function App() {
           Verify Data
         </button>
 
-        <button style={{ fontSize: "20px" }} onClick={restoreData}>Restore Data</button>
+        <button style={{ fontSize: "20px" }} onClick={() => setRestore(true)}>Restore Data</button>
       </div>
       {verify}
+
       <dialog open={restore}>
-        hello world
-        <button onClick={() => setRestore(false)}></button>
+        {displayHistory()}
+        <button onClick={() => setRestore(false)}>End</button>
       </dialog>
+
     </div>
   );
 }

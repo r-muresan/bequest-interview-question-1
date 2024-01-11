@@ -1,36 +1,80 @@
 import React, { useEffect, useState } from "react";
-
-const API_URL = "http://localhost:8080";
+import { useCookies } from 'react-cookie';
+import { API_ENDPOINTS } from "./routes.js"
 
 function App() {
+  const [csrfToken, setCSRFToken] = useState<string>();
   const [data, setData] = useState<string>();
-
+  const [verifiedFlag, setVerifiedFlag] = useState<boolean>();
+  const [cookies, setCookie] = useCookies<string>(["localData", "localDataTimestamp"])
   useEffect(() => {
     getData();
   }, []);
 
   const getData = async () => {
-    const response = await fetch(API_URL);
-    const { data } = await response.json();
-    setData(data);
-  };
-
-  const updateData = async () => {
-    await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({ data }),
+    const response = await fetch(API_ENDPOINTS.DATA, {
+      method: "GET",
+      mode: "cors",
+      credentials: "include",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
+    });
+    const { data, timestamp } = await response.json();
+    setData(data);
+    setCSRFToken(cookies["csrf"]);
+    if (cookies["localData"] == null) {
+      setCookie("localData", data);
+      setCookie("localDataTimestamp", timestamp);
+    }
+  };
+
+  const updateData = async () => {
+    const submissionTime = Date.now();
+    setCookie("localData", data);
+    setCookie("localDataTimestamp", submissionTime);
+    await fetch(API_ENDPOINTS.DATA, {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ data, timestamp: submissionTime }),
     });
 
     await getData();
   };
 
   const verifyData = async () => {
-    throw new Error("Not implemented");
+    await fetch(API_ENDPOINTS.DATA)
+      .then(res => res.json())
+      .then(res => verifyDataHelper(res.data, res.timestamp));
   };
+
+  const verifyDataHelper = async (fetchedData, fetchedDataTimestamp) => {
+    const dataComparisonStr = (
+      `Local Data: ${cookies.localData}\n`+
+      `Fetched Data: ${fetchedData}\n\n` +
+      `Local Data Timestamp: ${new Date(cookies.localDataTimestamp)}\n` +
+      `Fetched Data Timestamp: ${new Date(fetchedDataTimestamp)}`
+    );
+    if (cookies.localData === fetchedData && cookies.localDataTimestamp === fetchedDataTimestamp) {
+      alert(
+        `Fetched data matches locally stored submitted data\n\n${dataComparisonStr}`
+      );
+      setVerifiedFlag(true);
+    } else {
+      alert(
+        `DATA MISMATCH\n` + 
+        `Fetched data does not match last local copy of data submission\n\n${dataComparisonStr}`
+      )
+      setVerifiedFlag(false);
+    }
+    console.log(dataComparisonStr)
+  }
 
   return (
     <div
@@ -49,14 +93,14 @@ function App() {
     >
       <div>Saved Data</div>
       <input
-        style={{ fontSize: "30px" }}
+        style={{ fontSize: "30px"}}
         type="text"
         value={data}
         onChange={(e) => setData(e.target.value)}
       />
 
       <div style={{ display: "flex", gap: "10px" }}>
-        <button style={{ fontSize: "20px" }} onClick={updateData}>
+        <button style={{ fontSize: "20px"}} onClick={updateData}>
           Update Data
         </button>
         <button style={{ fontSize: "20px" }} onClick={verifyData}>

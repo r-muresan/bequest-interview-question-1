@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import crypto from "crypto";
-import uuid4 from "uuid4";
 
 const PORT = 8080;
 const app = express();

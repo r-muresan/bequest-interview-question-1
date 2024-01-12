@@ -3,15 +3,8 @@ import cors from "cors";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import crypto from "crypto";
-import { check, validationResult } from "express-validator";
+import { query } from "express-validator";
 import { database, clients } from "./database";
-
-declare module 'express-session' {
-  export interface SessionData {
-    data: string;
-    timestamp: number;
-  }
-}
 
 const PORT = 8080;
 const app = express();
@@ -40,12 +33,6 @@ app.use(session({
     httpOnly: true,
   },
 }))
-const postValidation = async function (req: Request, res: Response, next: NextFunction) {
-  const validData = await check('data').notEmpty().run(req);
-  const validTimestamp = await check('timestamp').notEmpty().run(req);
-  const result = validationResult(req);
-  next();
-}
 
 const sessionValidation = function (req: Request, res: Response, next: NextFunction) {
   const csrfToken = crypto.randomUUID();
@@ -75,14 +62,12 @@ app.get("/data", (req, res) => {
 });
 
 // Post Data
-app.post("/data", postValidation, (req, res) => {
+app.post("/data", query(['data', 'timestamp']).notEmpty().escape(), (req, res) => {
   const { data, timestamp } = req.body;
   if (req.session && data && timestamp) {
     database.sid = req.session.id;
     database.data = data;
     database.timestamp = timestamp;
-    req.session.data = data;
-    req.session.timestamp = timestamp;
   }
   res.sendStatus(200);
 });

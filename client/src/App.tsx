@@ -3,9 +3,7 @@ import { useCookies } from 'react-cookie';
 import { API_ENDPOINTS } from "./routes.js"
 
 function App() {
-  const [csrfToken, setCSRFToken] = useState<string>();
   const [data, setData] = useState<string>();
-  const [verifiedFlag, setVerifiedFlag] = useState<boolean>();
   const [cookies, setCookie] = useCookies<string>(["localData", "localDataTimestamp"])
   useEffect(() => {
     getData();
@@ -23,7 +21,6 @@ function App() {
     });
     const { data, timestamp } = await response.json();
     setData(data);
-    setCSRFToken(cookies["csrf"]);
     if (cookies["localData"] == null) {
       setCookie("localData", data);
       setCookie("localDataTimestamp", timestamp);
@@ -61,17 +58,21 @@ function App() {
       `Local Data Timestamp: ${new Date(cookies.localDataTimestamp)}\n` +
       `Fetched Data Timestamp: ${new Date(fetchedDataTimestamp)}`
     );
-    if (cookies.localData === fetchedData && cookies.localDataTimestamp === fetchedDataTimestamp) {
+    if (
+        cookies.localData === fetchedData && 
+        cookies.localDataTimestamp === fetchedDataTimestamp) {
       alert(
         `Fetched data matches locally stored submitted data\n\n${dataComparisonStr}`
       );
-      setVerifiedFlag(true);
+    } else if (cookies.localData == null || cookies.localData == "") {
+      alert(
+        `Locally stored submitted data not set\n\n${dataComparisonStr}`
+      );
     } else {
       alert(
         `DATA MISMATCH\n` + 
         `Fetched data does not match last local copy of data submission\n\n${dataComparisonStr}`
       )
-      setVerifiedFlag(false);
     }
     console.log(dataComparisonStr)
   }

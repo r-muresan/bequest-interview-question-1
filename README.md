@@ -23,6 +23,7 @@ With that In mind, I implemented the following:
 - Session ID to identify client making changes
 - Anti CSRF Token to be renewed on each api call. Without including this, submitting a request to the API will respond with an "unauthorized access" message
 - Caching local data that user submits and time submitted (before receiving response from server). While this binds user submission to a specific device/client, this may be useful to indicate a compromised connection to the server if returned data differs from submitted data.
+- Sanitization and validation of request data in POST method.
 
 ## Answers
 

@@ -1,13 +1,14 @@
 import { Sequelize, Model, Options, ModelAttributes, Attributes, ModelCtor } from 'sequelize';
 
-import config from './database.config';
+import  { createConfig }  from '../config/database.config';
+import getEnvVar from '../getEnvVar';
 
 class Database {
   private sequelize: Sequelize;
   envoriment: string;
 
   constructor() {
-    
+    const config = createConfig(getEnvVar('NODE_ENV') || 'development')
     this.sequelize = new Sequelize(
       config.database ?? '', 
       config.username ?? '', 

@@ -5,7 +5,7 @@
   "main": "app.ts",
   "scripts": {
     "start": "ts-node app.ts",
-    "migrate": "tsc --esModuleInterop config/database.config.ts --outDir dist && npx sequelize db:migrate"
+    "migrate": "tsc database/config/migrations.config.ts --outDir dist && ts-node ./node_modules/.bin/sequelize-cli db:migrate"
   },
   "author": "",
   "license": "ISC",

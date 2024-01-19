@@ -21,4 +21,8 @@ export class BlockService implements IBlockService {
   async getBlocks(): Promise<Block[]> {
     return this.blockRepository.getBlocks();
   }
+
+  async countBlocks(): Promise<number> {
+    return this.blockRepository.countBlocks();
+  }
 }

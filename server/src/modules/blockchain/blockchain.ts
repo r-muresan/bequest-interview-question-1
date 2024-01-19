@@ -59,7 +59,7 @@ export class Blockchain {
       const hashProof = calculateHash(currentBlock.index, timestamp, JSON.stringify(currentBlock.data), currentBlock.previousHash)
 
       if (currentBlock.hash !== hashProof) {
-        console.log("currentBlock", currentBlock.h, "hashProof", hashProof);
+        console.log("currentBlock", currentBlock, "hashProof", hashProof);
         return false;
       }
 
@@ -72,7 +72,10 @@ export class Blockchain {
   }
 
   public async reloadChain(): Promise<void> {
-    this.chain = await this.blockService.getBlocks();
+    const count = await this.blockService.countBlocks();
+
+    if(count === 1 || count !== this.chain.length)
+      this.chain = await this.blockService.getBlocks();
   }
 
   public async getChain(): Promise<Block[]> {

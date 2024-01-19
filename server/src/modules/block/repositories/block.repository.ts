@@ -22,5 +22,9 @@ export class BlockRepository {
   async getBlocks(): Promise<Block[]> {
     return Block.findAll()
   }
+
+  async countBlocks(): Promise<number> {
+    return Block.count()
+  }
   
 }

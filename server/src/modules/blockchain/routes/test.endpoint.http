@@ -1,0 +1,15 @@
+GET http://localhost:8080/health HTTP/1.1
+
+###
+POST http://localhost:8080/blockchain/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "data": "block data 1"
+}
+
+###
+GET http://localhost:8080/blockchain/last HTTP/1.1
+
+###
+GET http://localhost:8080/blockchain/validate HTTP/1.1

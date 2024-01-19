@@ -11,6 +11,10 @@ type EnvVars = {
   DB_HOSTNAME: string;
   TIMEOUT: string;
   API_KEY: string;
+  GENESIS_BLOCK_HASH: string;
+  GENESIS_BLOCK_PREVIOUS_HASH: string;
+  GENESIS_BLOCK_TIMESTAMP: string;
+  SALT: string;
 };
 
 export default function getEnvVar<K extends keyof EnvVars>(key: K): EnvVars[K] {

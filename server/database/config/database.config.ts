@@ -1,4 +1,4 @@
-import getEnvVar from "../../getEnvVar";
+import getEnvVar from "../../src/getEnvVar";
 
 export interface Config {
   username: string;

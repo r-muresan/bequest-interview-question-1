@@ -13,16 +13,16 @@ module.exports = {
         type: DataTypes.BIGINT
       },
       timestamp: {
-        type: DataTypes.DATE
+        type: DataTypes.STRING
       },
       data: {
-        type: DataTypes.JSON
+        type: DataTypes.STRING
       },
       previousHash: {
-        type: DataTypes.STRING(64)
+        type: DataTypes.STRING
       },
       hash: {
-        type: DataTypes.STRING(64)
+        type: DataTypes.STRING
       }
     });
   },

@@ -35,7 +35,7 @@ Block.init(
       field: "index",
     },
     timestamp: {
-      type: DataTypes.DATE,
+      type: DataTypes.STRING(254),
       field: "timestamp",
     },
     data: {

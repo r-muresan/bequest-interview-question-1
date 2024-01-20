@@ -25,7 +25,6 @@ export class BlockchainController implements IBlockController {
   };
 
   getLastBlock = async (req: Request, res: Response, next: NextFunction) => {
-    console.log("getLastBlock");
     try {
       const response = await this.blockchain.getLastBlock();
       res.status(STATUS_CODE.OK).send(response);
@@ -36,7 +35,6 @@ export class BlockchainController implements IBlockController {
   };
 
   isChainValid = async (req: Request, res: Response, next: NextFunction) => {
-    console.log("isValidChain");
     try {
       const response = await this.blockchain.isChainValid();
       res.status(STATUS_CODE.OK).send(response);

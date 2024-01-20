@@ -112,22 +112,11 @@ export class Blockchain {
 
 
   public async recoverChain(): Promise<boolean> {
-    if (await this.isChainValid())
+    await this.reloadChain(true);
+    if (!await this.isChainValid())
       return false;
-    
-    try {
-      await this.reloadChain(true);
 
-      if (!await this.isChainValid()) {
-        throw new Error("The chain is not valid in database, please check the integrity of the data in the database");
-      }
-
-      return true;
-    } catch (error) {
-      console.error("Erro na recuperação de dados:", error.message);
-      // Manter a cadeia atual em caso de falha na recuperação
-      return false;
-    }
+    return true;
   }
   
 }

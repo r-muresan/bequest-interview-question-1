@@ -5,7 +5,7 @@ POST http://localhost:8080/blockchain/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "data": "block data 2"
+    "data": "block data 3"
 }
 
 ###

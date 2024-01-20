@@ -5,14 +5,12 @@ import { BlockData } from "./types/block.data.type";
 import crypto from 'crypto';
 
 export class Blockchain {
-  private blockService: BlockService;
   private chain: Block[];
   private static instance: Blockchain;
 
   private constructor(
-    private blockFactory: BlockFactory
+    private blockService: BlockService
   ) {
-    this.blockService = this.blockFactory.getBlockService();
     this.chain = [new Block({
       index: 0,
       timestamp: '',
@@ -22,9 +20,9 @@ export class Blockchain {
     })];
   }
 
-  public static getInstance(blockFactory: BlockFactory): Blockchain {
+  public static getInstance(blockService: BlockService): Blockchain {
     if (!Blockchain.instance) {
-      Blockchain.instance = new Blockchain(blockFactory);
+      Blockchain.instance = new Blockchain(blockService);
     }
     return Blockchain.instance;
   }

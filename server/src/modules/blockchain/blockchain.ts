@@ -77,11 +77,14 @@ export class Blockchain {
     return this.calculateHash(block.index, block.timestamp, block.data, block.previousHash);
   }
 
-  public async reloadChain(): Promise<void> {
+  public async reloadChain(force?: boolean): Promise<void> {
     const count = await this.blockService.countBlocks();
 
-    if(count === 1 || count !== this.chain.length)
+    if(force || count === 1 || count !== this.chain.length)
       this.chain = await this.blockService.getBlocks();
+
+    if (!this.chain || this.chain.length === 0) 
+      throw new Error("Error to recovery chain");
   }
 
   public async getChain(): Promise<Block[]> {
@@ -105,6 +108,26 @@ export class Blockchain {
     hash.update(phrase);
     const result = hash.digest('hex');
     return result;
+  }
+
+
+  public async recoverChain(): Promise<boolean> {
+    if (await this.isChainValid())
+      return false;
+    
+    try {
+      await this.reloadChain(true);
+
+      if (!await this.isChainValid()) {
+        throw new Error("The chain is not valid in database, please check the integrity of the data in the database");
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Erro na recuperação de dados:", error.message);
+      // Manter a cadeia atual em caso de falha na recuperação
+      return false;
+    }
   }
   
 }

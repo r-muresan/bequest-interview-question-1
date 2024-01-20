@@ -54,4 +54,14 @@ export class BlockchainController implements IBlockController {
       next(error);
     }
   };
+
+  recoverChain = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const response = await this.blockchain.recoverChain();
+      res.status(STATUS_CODE.OK).send(response);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
 }

@@ -13,3 +13,5 @@ GET http://localhost:8080/blockchain/last HTTP/1.1
 
 ###
 GET http://localhost:8080/blockchain/validate HTTP/1.1
+###
+GET http://localhost:8080/blockchain/recover HTTP/1.1

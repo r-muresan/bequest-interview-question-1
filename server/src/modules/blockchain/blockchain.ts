@@ -1,3 +1,4 @@
+import { CustomError } from "../../utils/error/custom.errors";
 import { BlockFactory } from "../block/block.factory";
 import Block from "../block/models/block.model";
 import { BlockService } from '../block/services/block.service';
@@ -27,7 +28,7 @@ export class Blockchain {
     return Blockchain.instance;
   }
 
-  public async addBlock(data: BlockData): Promise<Block> { 
+  public async addBlock(data: BlockData): Promise<Partial< Block & { chainIsValid: boolean } >> { 
     await this.reloadChain();
     const newBlock = this.prepareNewBlock(data);
     await this.blockService.addBlock(newBlock);
@@ -82,7 +83,7 @@ export class Blockchain {
       this.chain = await this.blockService.getBlocks();
 
     if (!this.chain || this.chain.length === 0) 
-      throw new Error("Error to recovery chain");
+      throw new CustomError('Blockchain is empty', 404);
   }
 
   public async getChain(): Promise<Block[]> {
@@ -90,9 +91,12 @@ export class Blockchain {
     return this.chain;
   }
 
-  public async getLastBlock() {
+  public async getLastBlock(): Promise<Partial< Block & { chainIsValid: boolean } >> {
     await this.reloadChain();
-    return this.chain[this.chain.length - 1];
+    return { 
+      ...this.chain[this.chain.length - 1], 
+      chainIsValid: await this.isChainValid() 
+    };
   }
 
    private calculateHash(

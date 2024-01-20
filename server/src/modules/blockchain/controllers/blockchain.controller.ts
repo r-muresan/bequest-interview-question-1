@@ -1,4 +1,4 @@
-import { IBlockController } from "./blockchain.controller.interface.";
+import { IBlockController } from "./blockchain.controller.interface";
 import { Blockchain } from "../blockchain";
 import { NextFunction, Request, Response } from "express"
 import { STATUS_CODE } from "../../../utils/status.codes";

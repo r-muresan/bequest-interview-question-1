@@ -2,74 +2,73 @@ import { BlockFactory } from "../block/block.factory";
 import Block from "../block/models/block.model";
 import { BlockService } from '../block/services/block.service';
 import { BlockData } from "./types/block.data.type";
-import { calculateHash } from "../../utils/calculate.hash";
-import getEnvVar from "../../getEnvVar";
+import crypto from 'crypto';
 
 export class Blockchain {
   private blockService: BlockService;
-  static blockFactory: BlockFactory;
   private chain: Block[];
 
-  constructor(
+  private constructor(
     private blockFactory: BlockFactory
   ) {
     this.blockService = this.blockFactory.getBlockService();
     this.chain = [new Block({
-      index: 1,
-      timestamp: getEnvVar('GENESIS_BLOCK_TIMESTAMP'),
+      index: 0,
+      timestamp: '',
       data: JSON.stringify({"data": "Genesis Block"}),
-      previousHash: getEnvVar('GENESIS_BLOCK_PREVIOUS_HASH'),
-      hash: getEnvVar('GENESIS_BLOCK_HASH')
+      previousHash: '',
+      hash: ''
     })];
   }
 
-  public async addBlock(data: BlockData): Promise<Block> {
+  public async addBlock(data: BlockData): Promise<Block> { 
     await this.reloadChain();
+    const newBlock = this.prepareNewBlock(data);
+    await this.blockService.addBlock(newBlock);
+    return this.getLastBlock();
+  }
+  
+  private prepareNewBlock(data: BlockData): Partial<Block> {
     const lastBlock = this.chain[this.chain.length - 1];
     const newIndex = lastBlock.index + 1;
-    const stringfyData = JSON.stringify(data);
-    const newTimestamp = new Date().toUTCString()
-    console.log('newTimestamp', newTimestamp)
-    const newHash = calculateHash(newIndex, newTimestamp, stringfyData, lastBlock.hash);
-    console.log(newIndex+newTimestamp+stringfyData+ lastBlock.hash);
-    const newBlock = { 
+    const newTimestamp = new Date().toUTCString();
+    const stringifiedData = JSON.stringify(data);
+    const newHash = this.calculateHash(newIndex, newTimestamp, stringifiedData, lastBlock.hash);
+  
+    return { 
       index: newIndex, 
       timestamp: newTimestamp, 
-      data: stringfyData, 
+      data: stringifiedData, 
       previousHash: lastBlock.hash, 
       hash: newHash 
     };
-    return await this.blockService.addBlock(newBlock);
   }
 
   public async isChainValid(): Promise<boolean> {
     await this.reloadChain();
+  
     for (let i = 1; i < this.chain.length; i++) {
-      const currentBlock = this.chain[i];
-      const precedingBlock = this.chain[i - 1];
-
-      
-      const formatedDate = currentBlock.timestamp.replace(' ', 'T') + 'Z';
-      const timestamp = new Date(formatedDate).toUTCString();
-
-      console.log(currentBlock.index+timestamp+ currentBlock.data+currentBlock.previousHash)
-      console.log(currentBlock.data, typeof currentBlock.data)
-      console.log(JSON.stringify(currentBlock.data))
-      
-      const hashProof = calculateHash(currentBlock.index, timestamp, JSON.stringify(currentBlock.data), currentBlock.previousHash)
-
-      if (currentBlock.hash !== hashProof) {
-        console.log("currentBlock", currentBlock, "hashProof", hashProof);
-        return false;
-      }
-
-      if (currentBlock.previousHash !== precedingBlock.hash) {
+      if (!this.isValidBlock(this.chain[i], this.chain[i - 1])) {
         return false;
       }
     }
-
+  
     return true;
   }
+  
+  private isValidBlock(currentBlock: Block, precedingBlock: Block): boolean {
+    const recalculatedHash = this.calculateHashForBlock(currentBlock); 
+    if (currentBlock.hash !== recalculatedHash || currentBlock.previousHash !== precedingBlock.hash) {
+      return false;
+    }
+  
+    return true;
+  }
+  
+  private calculateHashForBlock(block: Block): string {
+    return this.calculateHash(block.index, block.timestamp, block.data, block.previousHash);
+  }
+  
 
   public async reloadChain(): Promise<void> {
     const count = await this.blockService.countBlocks();
@@ -86,6 +85,19 @@ export class Blockchain {
   public async getLastBlock() {
     await this.reloadChain();
     return this.chain[this.chain.length - 1];
+  }
+
+   private calculateHash(
+    index: number, 
+    timestamp: string, 
+    data: string, 
+    previousHash: string
+  ): string {
+    const hash = crypto.createHash('sha256');
+    const phrase = `${index}${timestamp}${data}${previousHash}`;
+    hash.update(phrase);
+    const result = hash.digest('hex');
+    return result;
   }
   
 }

@@ -12,10 +12,6 @@ export interface Config {
     connectionTimeout: number;
     requestTimeout: number;
     dialect: string;
-    timezone: string;
-    dialectOptions: {
-      encrypt: boolean;
-    };
   };
 }
 
@@ -32,10 +28,6 @@ export default function createConfig(env: string): Config {
       dialect: 'mysql',
       connectionTimeout: parseInt(getEnvVar('TIMEOUT') || '15000'),
       requestTimeout: parseInt(getEnvVar('TIMEOUT') || '15000'),
-      timezone: 'America/Sao_Paulo',
-      dialectOptions: {
-        encrypt: env === 'production'
-      }
-    }
+  }
   };
 }

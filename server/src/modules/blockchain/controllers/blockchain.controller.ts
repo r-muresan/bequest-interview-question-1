@@ -9,7 +9,6 @@ export class BlockchainController implements IBlockController {
   }
 
   addBlock = async (req: Request, res: Response, next: NextFunction) => {
-    console.log("addBlock");
     try {
       const { body }: { body: any } = req;
       // TODO: dto to validade body
@@ -19,7 +18,6 @@ export class BlockchainController implements IBlockController {
         res.status(STATUS_CODE.OK).send(response)
       }
     } catch (error) {
-      console.log(error);
       next(error);
     }
   };
@@ -29,7 +27,6 @@ export class BlockchainController implements IBlockController {
       const response = await this.blockchain.getLastBlock();
       res.status(STATUS_CODE.OK).send(response);
     } catch (error) {
-      console.log(error);
       next(error);
     }
   };
@@ -39,18 +36,15 @@ export class BlockchainController implements IBlockController {
       const response = await this.blockchain.isChainValid();
       res.status(STATUS_CODE.OK).send(response);
     } catch (error) {
-      console.log(error);
       next(error);
     }
   };
 
   getChain = async (req: Request, res: Response, next: NextFunction) => {
-    console.log("getChain");
     try {
       const response = await this.blockchain.getChain();
       res.status(STATUS_CODE.OK).send(response);
     } catch (error) {
-      console.log(error);
       next(error);
     }
   };
@@ -60,7 +54,6 @@ export class BlockchainController implements IBlockController {
       const response = await this.blockchain.recoverChain();
       res.status(STATUS_CODE.OK).send(response);
     } catch (error) {
-      console.log(error);
       next(error);
     }
   };

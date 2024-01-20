@@ -8,7 +8,7 @@ import { BlockRepository } from "../block/repositories/block.repository";
 function BlockchainFactory() {
   const blockService = new BlockService(new BlockRepository(db.getSequelize()));
   const blockFactory = new BlockFactory(blockService);
-  const blockchain = new Blockchain(blockFactory);
+  const blockchain = Blockchain.getInstance(blockFactory);
   const blockchainController = new BlockchainController(blockchain);
   return {blockchain, blockchainController};
 }

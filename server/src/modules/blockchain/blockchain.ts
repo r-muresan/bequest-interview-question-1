@@ -7,6 +7,7 @@ import crypto from 'crypto';
 export class Blockchain {
   private blockService: BlockService;
   private chain: Block[];
+  private static instance: Blockchain;
 
   private constructor(
     private blockFactory: BlockFactory
@@ -19,6 +20,13 @@ export class Blockchain {
       previousHash: '',
       hash: ''
     })];
+  }
+
+  public static getInstance(blockFactory: BlockFactory): Blockchain {
+    if (!Blockchain.instance) {
+      Blockchain.instance = new Blockchain(blockFactory);
+    }
+    return Blockchain.instance;
   }
 
   public async addBlock(data: BlockData): Promise<Block> { 
@@ -68,7 +76,6 @@ export class Blockchain {
   private calculateHashForBlock(block: Block): string {
     return this.calculateHash(block.index, block.timestamp, block.data, block.previousHash);
   }
-  
 
   public async reloadChain(): Promise<void> {
     const count = await this.blockService.countBlocks();

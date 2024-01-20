@@ -2,6 +2,7 @@ import { IBlockController } from "./blockchain.controller.interface";
 import { Blockchain } from "../blockchain";
 import { NextFunction, Request, Response } from "express"
 import { STATUS_CODE } from "../../../utils/status.codes";
+import { AddBlockDTO } from "../dtos/add.block.dto";
 
 export class BlockchainController implements IBlockController {
 
@@ -11,12 +12,9 @@ export class BlockchainController implements IBlockController {
   addBlock = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { body }: { body: any } = req;
-      // TODO: dto to validade body
-      if(body && body?.data){
-        console.log(body.data);
-        const response = await this.blockchain.addBlock(body);
-        res.status(STATUS_CODE.OK).send(response)
-      }
+      const addBlockDTO = AddBlockDTO.validate(body);
+      const response = await this.blockchain.addBlock(addBlockDTO);
+      res.status(STATUS_CODE.OK).send(response)
     } catch (error) {
       next(error);
     }

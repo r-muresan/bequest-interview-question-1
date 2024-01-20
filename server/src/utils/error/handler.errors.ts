@@ -2,10 +2,7 @@ import { Response } from "express";
 import { STATUS_CODE } from "../status.codes";
 import { CustomError } from './custom.errors'
 import { ERROR_MESSAGES } from './messages.enum.errors';
-
-interface FieldErrors {
-  [key: string]: string[] | undefined;
-}
+import { FieldErrors } from "./field.errors";
 
 export class ErrorHandler {
   error!: any;

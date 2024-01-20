@@ -1,5 +1,6 @@
 
 import { STATUS_CODE } from "../status.codes";
+import { FieldErrors } from "./field.errors";
 import { ERROR_MESSAGES } from './messages.enum.errors'
 
 export class CustomError extends Error {
@@ -51,18 +52,18 @@ export class InternalServerException extends CustomError {
   }
 }
 
-// export class ZodDtoValidatorException extends CustomError {
-//   errors!: FieldErrors;
-//   hideErros!: boolean;
+export class ZodDtoValidatorException extends CustomError {
+  errors!: FieldErrors;
+  hideErros!: boolean;
 
-//   constructor(error: FieldErrors, hideErros?: boolean) {
-//     super(
-//       ERROR_MESSAGES.DATA_VALIDATION_FAILURE,
-//       STATUS_CODE.NOT_ACCEPTABLE,
-//       error
-//     );
-//     this.name = this.constructor.name;
-//     this.errors = error;
-//     this.hideErros = hideErros ?? false;
-//   }
-// }
+  constructor(error: FieldErrors, hideErros?: boolean) {
+    super(
+      ERROR_MESSAGES.DATA_VALIDATION_FAILURE,
+      STATUS_CODE.NOT_ACCEPTABLE,
+      error
+    );
+    this.name = this.constructor.name;
+    this.errors = error;
+    this.hideErros = hideErros ?? false;
+  }
+}

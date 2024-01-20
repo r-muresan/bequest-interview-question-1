@@ -1,5 +1,4 @@
 import { CustomError } from "../../utils/error/custom.errors";
-import { BlockFactory } from "../block/block.factory";
 import Block from "../block/models/block.model";
 import { BlockService } from '../block/services/block.service';
 import { BlockData } from "./types/block.data.type";
@@ -28,7 +27,7 @@ export class Blockchain {
     return Blockchain.instance;
   }
 
-  public async addBlock(data: BlockData): Promise<Partial< Block & { chainIsValid: boolean } >> { 
+  public async addBlock(data: BlockData) { 
     await this.reloadChain();
     const newBlock = this.prepareNewBlock(data);
     await this.blockService.addBlock(newBlock);
@@ -91,12 +90,9 @@ export class Blockchain {
     return this.chain;
   }
 
-  public async getLastBlock(): Promise<Partial< Block & { chainIsValid: boolean } >> {
+  public async getLastBlock() {
     await this.reloadChain();
-    return { 
-      ...this.chain[this.chain.length - 1], 
-      chainIsValid: await this.isChainValid() 
-    };
+    return this.chain[this.chain.length - 1].data;
   }
 
    private calculateHash(

@@ -10,13 +10,15 @@ function App() {
   }, []);
 
   const getData = async () => {
-    const response = await fetch(API_URL);
+    const response = await fetch(`${API_URL}/blockchain/last`);
+    
+    console.log(response);
     const { data } = await response.json();
     setData(data);
   };
 
   const updateData = async () => {
-    await fetch(API_URL, {
+    await fetch(`${API_URL}/blockchain/`, {
       method: "POST",
       body: JSON.stringify({ data }),
       headers: {
@@ -29,7 +31,9 @@ function App() {
   };
 
   const verifyData = async () => {
-    throw new Error("Not implemented");
+    
+    const response = await fetch(`${API_URL}/blockchain/validate`);
+    alert(response);
   };
 
   return (

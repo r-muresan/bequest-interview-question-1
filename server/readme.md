@@ -38,7 +38,7 @@ Chain integrity is maintained by validating each block against the previous bloc
 
 ### If data has been tampered with, how can customers recover lost data?
 
-The `receiverChain()` method appears to be responsible for restoring the blockchain. It reloads the strings from the database and checks their integrity. If the string is corrupted, this method will return `false`, indicating that recovery has failed. However, the exact recovery mechanism (how to recover lost or corrupted data) is not clearly detailed in the provided code.
+The `recoverChain()` method appears to be responsible for restoring the blockchain. It reloads the strings from the database and checks their integrity. If the string is corrupted, this method will return `false`, indicating that recovery has failed. However, the exact recovery mechanism (how to recover lost or corrupted data) is not clearly detailed in the provided code. Also, a cronjob was created to run every minute checking the integrity of the chain.
 
 ## Architectural Overview
 
@@ -117,6 +117,7 @@ build the image.
 $ docker build -t my-server-image .
 # executing docker
 $ docker run -p 8080:8080 my-server-image
+# Atention: Docker may need a distinct config to the database
 ```
 
 ## API Reference

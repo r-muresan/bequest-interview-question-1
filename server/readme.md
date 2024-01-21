@@ -97,6 +97,19 @@ export default {
 };
 ```
 
+## Docker
+
+By default, the Docker will expose port 8080, so change this within the
+Dockerfile if necessary. When ready, simply use the Dockerfile to
+build the image.
+
+```sh
+# creating image
+$ docker build -t my-server-image . 
+# executing docker
+$ docker run -p 8080:8080 my-server-image
+
+
 ## API Reference
 
 ### Update the data in the blockchain
@@ -212,3 +225,10 @@ true
 `calculateHash(...)`: Calculates the hash of a block based on its attributes.
 
 `recoverChain()`: Attempts to recover the blockchain.
+
+
+## License
+
+MIT
+
+**Free Software, Hell Yeah!**

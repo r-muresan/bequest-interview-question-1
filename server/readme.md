@@ -190,3 +190,25 @@ Connection: close
 
 true
 ```
+
+### Main Methods:
+
+`addBlock(data: BlockData)`: Adds a new block to the chain.
+
+`prepareNewBlock(data: BlockData)`: Prepares a new block based on the given data and the last block in the chain.
+
+`isChainValid()`: Checks whether the chain is intact, validating each block in relation to the previous one.
+
+`isValidBlock(currentBlock: Block, precedingBlock: Block)`: Validates a block against its predecessor.
+
+`calculateHashForBlock(block: Block)`: Calculates the hash of a block.
+
+`reloadChain(force?: boolean)`: Reloads the database chain.
+
+`getChain()`: Returns the current blockchain.
+
+`getLastBlock()`: Returns the last block in the chain.
+
+`calculateHash(...)`: Calculates the hash of a block based on its attributes.
+
+`recoverChain()`: Attempts to recover the blockchain.

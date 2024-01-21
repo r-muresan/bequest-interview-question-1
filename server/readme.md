@@ -53,7 +53,7 @@ $ npm run start
 ## Test
 
 ```bash
-Not implemented yet
+$ npm run test
 ```
 
 ## Migration
@@ -213,8 +213,7 @@ true
 
 `recoverChain()`: Attempts to recover the blockchain.
 
-# Tests
-
+# Tests runned
 
 File | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s  
 ------------------------------------|---------|----------|---------|---------|-----------------------

@@ -75,7 +75,7 @@ export class Blockchain {
     return this.calculateHash(block.index, block.timestamp, block.data, block.previousHash);
   }
 
-  public async reloadChain(force?: boolean): Promise<void> {
+  private async reloadChain(force?: boolean): Promise<void> {
     const count = await this.blockService.countBlocks();
 
     if(force || count === 1 || count !== this.chain.length)

@@ -226,6 +226,37 @@ true
 
 `recoverChain()`: Attempts to recover the blockchain.
 
+# Packages Used
+
+Below are the npm packages used in this project, along with their respective links to documentation on the npm site.
+
+- [**cors**](https://www.npmjs.com/package/cors): ^2.8.5
+
+  - Description: Module that provides support for CORS (Cross-Origin Resource Sharing) middleware for Express.
+
+- [**crypto**](https://www.npmjs.com/package/crypto): ^1.0.1
+
+  - Description: Library for cryptographic functions in Node.js.
+
+- [**dotenv**](https://www.npmjs.com/package/dotenv): ^16.3.1
+
+  - Description: Loads environment variables from a `.env` file to process.env.
+
+- [**express**](https://www.npmjs.com/package/express): ^4.18.2
+
+  - Description: Minimalist web framework for Node.js.
+
+- [**mysql2**](https://www.npmjs.com/package/mysql2): ^3.7.0
+
+  - Description: MySQL Driver for Node.js.
+
+- [**sequelize**](https://www.npmjs.com/package/sequelize): ^6.35.2
+
+  - Description: ORM (Object-Relational Mapping) for Node.js, supporting PostgreSQL, MySQL, SQLite and MSSQL.
+
+- [**ts-node**](https://www.npmjs.com/package/ts-node): ^10.9.2
+  - Description: Executes TypeScript files directly in Node.js without the need for prior compilation.
+
 ## License
 
 MIT

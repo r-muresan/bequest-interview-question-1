@@ -14,7 +14,7 @@ export class BlockchainController implements IBlockController {
       const { body }: { body: any } = req;
       const addBlockDTO = AddBlockDTO.validate(body);
       const response = await this.blockchain.addBlock(addBlockDTO);
-      res.status(STATUS_CODE.OK).send(response)
+      res.status(STATUS_CODE.CREATED).send(response)
     } catch (error) {
       next(error);
     }

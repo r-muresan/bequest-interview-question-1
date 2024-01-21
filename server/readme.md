@@ -105,10 +105,10 @@ build the image.
 
 ```sh
 # creating image
-$ docker build -t my-server-image . 
+$ docker build -t my-server-image .
 # executing docker
 $ docker run -p 8080:8080 my-server-image
-
+```
 
 ## API Reference
 
@@ -225,7 +225,6 @@ true
 `calculateHash(...)`: Calculates the hash of a block based on its attributes.
 
 `recoverChain()`: Attempts to recover the blockchain.
-
 
 ## License
 

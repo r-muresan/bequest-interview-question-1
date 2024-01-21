@@ -97,6 +97,19 @@ export default {
 };
 ```
 
+## Docker
+
+By default, the Docker will expose port 8080, so change this within the
+Dockerfile if necessary. When ready, simply use the Dockerfile to
+build the image.
+
+```sh
+# creating image
+$ docker build -t my-server-image .
+# executing docker
+$ docker run -p 8080:8080 my-server-image
+```
+
 ## API Reference
 
 ### Update the data in the blockchain
@@ -215,44 +228,82 @@ true
 
 # Tests runned
 
-File | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s  
-------------------------------------|---------|----------|---------|---------|-----------------------
-All files | 74.4 | 58.97 | 66.12 | 74.07 |  
- database | 81.81 | 75 | 66.66 | 81.81 |  
- database.ts | 81.81 | 75 | 66.66 | 81.81 | 24,33  
- database/config | 50 | 68 | 50 | 50 |  
- database.config.ts | 50 | 68 | 50 | 50 | 33-35  
- src | 82.75 | 20 | 66.66 | 82.75 |  
- app.ts | 71.42 | 25 | 0 | 71.42 | 16-20  
- getEnvVar.ts | 85.71 | 0 | 100 | 85.71 | 23  
- index.ts | 100 | 100 | 100 | 100 |  
- src/middlewares | 44.44 | 0 | 0 | 37.5 |  
- error.middleware.ts | 44.44 | 0 | 0 | 37.5 | 13-19  
- src/modules/block | 100 | 100 | 100 | 100 |  
- block.factory.ts | 100 | 100 | 100 | 100 |  
- src/modules/block/models | 100 | 100 | 100 | 100 |  
- block.model.ts | 100 | 100 | 100 | 100 |  
- src/modules/block/repositories | 75 | 100 | 66.66 | 75 |  
- block.repository.ts | 75 | 100 | 66.66 | 75 | 11-15  
- src/modules/block/services | 71.42 | 100 | 66.66 | 71.42 |  
- block.service.ts | 71.42 | 100 | 66.66 | 71.42 | 10-14  
- src/modules/blockchain | 87.27 | 69.23 | 92.3 | 87.03 |  
- blockchain.factory.ts | 100 | 100 | 100 | 100 |  
- blockchain.ts | 85.41 | 69.23 | 91.66 | 85.1 | 58,68,85,113-117  
- src/modules/blockchain/controllers | 75 | 100 | 81.81 | 74.19 |  
- blockchain.controller.ts | 75 | 100 | 81.81 | 74.19 | 19,28,37,46,51-55  
- src/modules/blockchain/dtos | 88.88 | 0 | 100 | 88.88 |  
- add.block.dto.ts | 88.88 | 0 | 100 | 88.88 | 20  
- src/modules/blockchain/routes | 100 | 100 | 100 | 100 |  
- blockchain.routes.ts | 100 | 100 | 100 | 100 |  
- src/utils | 100 | 100 | 100 | 100 |  
- status.codes.ts | 100 | 100 | 100 | 100 |  
- src/utils/error | 39.13 | 18.18 | 10 | 39.13 |  
- custom.errors.ts | 34.61 | 0 | 0 | 34.61 | ...,39-40,46-51,60-67
-handler.errors.ts | 26.66 | 0 | 0 | 26.66 | 18-40  
- messages.enum.errors.ts | 100 | 100 | 100 | 100 |  
-------------------------------------|---------|----------|---------|---------|-----------------------
+| File                                 | % Stmts   | % Branch   | % Funcs   | % Lines   | Uncovered Line #s       |
+| ------------------------------------ | --------- | ---------- | --------- | --------- | ----------------------- |
+| All files                            | 74.4      | 58.97      | 66.12     | 74.07     |
+| database                             | 81.81     | 75         | 66.66     | 81.81     |
+| database.ts                          | 81.81     | 75         | 66.66     | 81.81     | 24,33                   |
+| database/config                      | 50        | 68         | 50        | 50        |
+| database.config.ts                   | 50        | 68         | 50        | 50        | 33-35                   |
+| src                                  | 82.75     | 20         | 66.66     | 82.75     |
+| app.ts                               | 71.42     | 25         | 0         | 71.42     | 16-20                   |
+| getEnvVar.ts                         | 85.71     | 0          | 100       | 85.71     | 23                      |
+| index.ts                             | 100       | 100        | 100       | 100       |
+| src/middlewares                      | 44.44     | 0          | 0         | 37.5      |
+| error.middleware.ts                  | 44.44     | 0          | 0         | 37.5      | 13-19                   |
+| src/modules/block                    | 100       | 100        | 100       | 100       |
+| block.factory.ts                     | 100       | 100        | 100       | 100       |
+| src/modules/block/models             | 100       | 100        | 100       | 100       |
+| block.model.ts                       | 100       | 100        | 100       | 100       |
+| src/modules/block/repositories       | 75        | 100        | 66.66     | 75        |
+| block.repository.ts                  | 75        | 100        | 66.66     | 75        | 11-15                   |
+| src/modules/block/services           | 71.42     | 100        | 66.66     | 71.42     |
+| block.service.ts                     | 71.42     | 100        | 66.66     | 71.42     | 10-14                   |
+| src/modules/blockchain               | 87.27     | 69.23      | 92.3      | 87.03     |
+| blockchain.factory.ts                | 100       | 100        | 100       | 100       |
+| blockchain.ts                        | 85.41     | 69.23      | 91.66     | 85.1      | 58,68,85,113-117        |
+| src/modules/blockchain/controllers   | 75        | 100        | 81.81     | 74.19     |
+| blockchain.controller.ts             | 75        | 100        | 81.81     | 74.19     | 19,28,37,46,51-55       |
+| src/modules/blockchain/dtos          | 88.88     | 0          | 100       | 88.88     |
+| add.block.dto.ts                     | 88.88     | 0          | 100       | 88.88     | 20                      |
+| src/modules/blockchain/routes        | 100       | 100        | 100       | 100       |
+| blockchain.routes.ts                 | 100       | 100        | 100       | 100       |
+| src/utils                            | 100       | 100        | 100       | 100       |
+| status.codes.ts                      | 100       | 100        | 100       | 100       |
+| src/utils/error                      | 39.13     | 18.18      | 10        | 39.13     |
+| custom.errors.ts                     | 34.61     | 0          | 0         | 34.61     | ...,39-40,46-51,60-67   |
+| handler.errors.ts                    | 26.66     | 0          | 0         | 26.66     | 18-40                   |
+| messages.enum.errors.ts              | 100       | 100        | 100       | 100       |
+| ------------------------------------ | --------- | ---------- | --------- | --------- | ----------------------- |
+
 Test Suites: 0 total
 Tests: 0 failed, 5 passed, 5 total
 Snapshots: 0 total
 Time: 2.003 s
+
+# Packages Used
+
+Below are the npm packages used in this project, along with their respective links to documentation on the npm site.
+
+- [**cors**](https://www.npmjs.com/package/cors): ^2.8.5
+
+  - Description: Module that provides support for CORS (Cross-Origin Resource Sharing) middleware for Express.
+
+- [**crypto**](https://www.npmjs.com/package/crypto): ^1.0.1
+
+  - Description: Library for cryptographic functions in Node.js.
+
+- [**dotenv**](https://www.npmjs.com/package/dotenv): ^16.3.1
+
+  - Description: Loads environment variables from a `.env` file to process.env.
+
+- [**express**](https://www.npmjs.com/package/express): ^4.18.2
+
+  - Description: Minimalist web framework for Node.js.
+
+- [**mysql2**](https://www.npmjs.com/package/mysql2): ^3.7.0
+
+  - Description: MySQL Driver for Node.js.
+
+- [**sequelize**](https://www.npmjs.com/package/sequelize): ^6.35.2
+
+  - Description: ORM (Object-Relational Mapping) for Node.js, supporting PostgreSQL, MySQL, SQLite and MSSQL.
+
+- [**ts-node**](https://www.npmjs.com/package/ts-node): ^10.9.2
+  - Description: Executes TypeScript files directly in Node.js without the need for prior compilation.
+
+## License
+
+MIT
+
+**Free Software, Hell Yeah!**

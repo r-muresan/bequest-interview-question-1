@@ -8,7 +8,7 @@ export class BlockRepository {
   constructor(private readonly sequelize: Sequelize) {}
 
   async getBlockById(id: number): Promise<Block | null> {
-    return Block.findOne({ where: { id } })
+    return await Block.findOne({ where: { id } })
   }
 
   async getBlockWhere(where: Where ): Promise<Block | null> {    
@@ -16,15 +16,15 @@ export class BlockRepository {
   }
 
   async addBlock(block: Partial<Block>): Promise<Block> {
-    return Block.create(block as Block)
+    return await Block.create(block as Block)
   }
 
   async getBlocks(): Promise<Block[]> {
-    return Block.findAll()
+    return await Block.findAll()
   }
 
   async countBlocks(): Promise<number> {
-    return Block.count()
+    return await Block.count()
   }
   
 }

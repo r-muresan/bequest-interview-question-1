@@ -312,6 +312,14 @@ Below are the npm packages used in this project, along with their respective lin
 - [**ts-node**](https://www.npmjs.com/package/ts-node): ^10.9.2
   - Description: Executes TypeScript files directly in Node.js without the need for prior compilation.
 
+## References
+
+1. [Learn & Build a JavaScript Blockchain - Part 1](https://medium.com/@spenserhuang/learn-build-a-javascript-blockchain-part-1-ca61c285821e)
+2. [Blockchain in JavaScript](https://github.com/nambrot/blockchain-in-js)
+3. [SavjeeCoin - Blockchain.js](https://github.com/Savjee/SavjeeCoin/blob/master/src/blockchain.js)
+4. [V8 JavaScript Engine Blog - Fast Async](https://v8.dev/blog/fast-async)
+
+
 ## License
 
 MIT

@@ -37,6 +37,66 @@ This project adopts a "Feature by Package" architectural approach, where the cod
 
 Additionally, the project employs the Singleton design pattern for the Blockchain class. This pattern ensures that only one instance of the blockchain is created and used throughout the application, maintaining data consistency and integrity across all operations. The Singleton pattern is particularly beneficial in a blockchain context, where a single, consistent view of the chain is crucial.
 
+## Installation
+
+```bash
+$ npm install
+```
+
+## Running the app
+
+```bash
+# development
+$ npm run start
+```
+
+## Test
+
+```bash
+Not implemented yet
+```
+
+## Migration
+
+```bash
+# Create a Migration File: Generate a new migration file with a command like:
+$ npx sequelize-cli migration:generate --name=create-table-name
+# Run the Migration: To apply the migration to your database, you would run:
+$ npm run migrate
+```
+
+## Seed
+
+To create a seeder, create a file in ./database/seeders
+
+```bash
+$ npx sequelize-cli seed:generate --name seed-name
+```
+
+```typescript
+import { QueryInterface } from "sequelize";
+
+export default {
+  up: async (queryInterface: QueryInterface) => {
+    await queryInterface.bulkInsert("tableName", [
+      {
+        field: "ABC",
+      },
+    ]);
+  },
+
+  down: async (queryInterface: QueryInterface) => {
+    await queryInterface.bulkDelete(
+      "tableName",
+      {
+        field: "ABC",
+      },
+      {}
+    );
+  },
+};
+```
+
 ## API Reference
 
 ### Update the data in the blockchain

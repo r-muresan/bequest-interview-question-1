@@ -305,12 +305,24 @@ Below are the npm packages used in this project, along with their respective lin
 
   - Description: MySQL Driver for Node.js.
 
+- [**node-cron**](https://www.npmjs.com/package/node-cron): ^3.0.3
+
+  - Description: A simple cron-like job scheduler for Node.js.
+
+- [**@types/node-cron**](https://www.npmjs.com/package/@types/node-cron): ^3.0.11
+
+  - Description: TypeScript type definitions for the `node-cron` library, which provides a simple cron-like job scheduler for Node.js.
+
 - [**sequelize**](https://www.npmjs.com/package/sequelize): ^6.35.2
 
-  - Description: ORM (Object-Relational Mapping) for Node.js, supporting PostgreSQL, MySQL, SQLite and MSSQL.
+  - Description: ORM (Object-Relational Mapping) for Node.js, supporting PostgreSQL, MySQL, SQLite, and MSSQL, in this project we are using MySQL.
 
 - [**ts-node**](https://www.npmjs.com/package/ts-node): ^10.9.2
+
   - Description: Executes TypeScript files directly in Node.js without the need for prior compilation.
+
+- [**zod**](https://www.npmjs.com/package/zod): ^3.22.4
+  - Description: TypeScript-first schema declaration and validation library.
 
 ## References
 
@@ -318,7 +330,6 @@ Below are the npm packages used in this project, along with their respective lin
 2. [Blockchain in JavaScript](https://github.com/nambrot/blockchain-in-js)
 3. [SavjeeCoin - Blockchain.js](https://github.com/Savjee/SavjeeCoin/blob/master/src/blockchain.js)
 4. [V8 JavaScript Engine Blog - Fast Async](https://v8.dev/blog/fast-async)
-
 
 ## License
 

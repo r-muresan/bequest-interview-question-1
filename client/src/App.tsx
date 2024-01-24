@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 const API_URL = "http://localhost:8080";
 
 function App() {
-  const [data, setData] = useState<string>();
+  const [data, setData] = useState<string>("");
 
   useEffect(() => {
     getData();
@@ -16,7 +16,7 @@ function App() {
   };
 
   const updateData = async () => {
-    await fetch(API_URL, {
+    const response = await fetch(API_URL, {
       method: "POST",
       body: JSON.stringify({ data }),
       headers: {
@@ -25,6 +25,8 @@ function App() {
       },
     });
 
+    const updateData = await response.json();
+    alert(updateData.message)
     await getData();
   };
 

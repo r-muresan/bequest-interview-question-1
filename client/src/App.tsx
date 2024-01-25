@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { createHash } from 'crypto';
 
 const API_URL = "http://localhost:8080";
 
@@ -8,6 +9,10 @@ function App() {
   useEffect(() => {
     getData();
   }, []);
+  
+  const generateHash = async(data: string) =>{
+    return await createHash('sha256').update(data).digest('hex');
+  }
 
   const getData = async () => {
     const response = await fetch(API_URL);
@@ -16,9 +21,10 @@ function App() {
   };
 
   const updateData = async () => {
+    const hash = await generateHash(data || '' )
     await fetch(API_URL, {
       method: "POST",
-      body: JSON.stringify({ data }),
+      body: JSON.stringify({ data, hash }),
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",

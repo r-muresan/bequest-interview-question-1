@@ -1,35 +1,41 @@
 import React, { useEffect, useState } from "react";
+import { useRequest } from "./hooks/useRequest";
 
-const API_URL = "http://localhost:8080";
+// const API_URL = "http://localhost:8080";
 
-function App() {
-  const [data, setData] = useState<string>();
+function App(): JSX.Element {
+  const [data, setData] = useState<string>("");
+  const [responseHash, setResponseHash] = useState<string | null>(null);
+
+  const { updateData, getData, validateResponse } = useRequest();
+
+  const fetchData = async (): Promise<void> => {
+    const { msg, hash } = await getData();
+    setResponseHash(hash);
+    setData(msg);
+  };
 
   useEffect(() => {
-    getData();
+    fetchData().catch(console.error);
   }, []);
 
-  const getData = async () => {
-    const response = await fetch(API_URL);
-    const { data } = await response.json();
-    setData(data);
+  const verifyData = (): void => {
+    if (!validateResponse(data, responseHash)) {
+      if (
+        window.confirm(
+          "the data has been tampered with, Do you want to try again?",
+        )
+      ) {
+        fetchData().catch(console.error);
+      }
+    } else {
+      alert("the data has not been tampered");
+    }
   };
 
-  const updateData = async () => {
-    await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({ data }),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-
-    await getData();
-  };
-
-  const verifyData = async () => {
-    throw new Error("Not implemented");
+  const onClick = async (): Promise<void> => {
+    await updateData(data);
+    await fetchData();
   };
 
   return (
@@ -45,18 +51,21 @@ function App() {
         flexDirection: "column",
         gap: "20px",
         fontSize: "30px",
-      }}
-    >
+      }}>
       <div>Saved Data</div>
       <input
         style={{ fontSize: "30px" }}
         type="text"
         value={data}
-        onChange={(e) => setData(e.target.value)}
+        onChange={e => {
+          setData(e.target.value);
+        }}
       />
 
       <div style={{ display: "flex", gap: "10px" }}>
-        <button style={{ fontSize: "20px" }} onClick={updateData}>
+        <button
+          style={{ fontSize: "20px" }}
+          onClick={async () => await onClick()}>
           Update Data
         </button>
         <button style={{ fontSize: "20px" }} onClick={verifyData}>

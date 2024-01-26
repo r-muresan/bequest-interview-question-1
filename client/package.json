@@ -10,10 +10,13 @@
     "@types/node": "^16.18.69",
     "@types/react": "^18.2.46",
     "@types/react-dom": "^18.2.18",
-    "crypto": "^1.0.1",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
+    "crypto-ts": "^1.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
+    "stream": "npm:stream-browserify",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
@@ -28,6 +31,9 @@
       "react-app",
       "react-app/jest"
     ]
+  },
+  "browser": {
+    "crypto": false
   },
   "browserslist": {
     "production": [

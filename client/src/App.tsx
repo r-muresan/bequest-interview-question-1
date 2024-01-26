@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { createHash } from 'crypto';
+//import {SHA256, enc} from 'crypto-ts'
+const crypto = require('crypto-browserify');
 
 const API_URL = "http://localhost:8080";
 
 function App() {
-  const [data, setData] = useState<string>();
+  const [data, setData] = useState<string>('');
 
   useEffect(() => {
     getData();
   }, []);
   
   const generateHash = async(data: string) =>{
-    return await createHash('sha256').update(data).digest('hex');
+//    const hashWorld = await SHA256(data).toString(enc.Hex);
+    const hashWorld = await crypto.createHash('sha256').update(data).digest('hex');
+    console.log('data to hash ', data, hashWorld)
+
+    return hashWorld
   }
 
   const getData = async () => {
@@ -21,8 +26,8 @@ function App() {
   };
 
   const updateData = async () => {
-    const hash = await generateHash(data || '' )
-    await fetch(API_URL, {
+    const hash = await generateHash(data)
+    const res = await fetch(API_URL, {
       method: "POST",
       body: JSON.stringify({ data, hash }),
       headers: {
@@ -30,29 +35,32 @@ function App() {
         "Content-Type": "application/json",
       },
     });
+    console.log('res', res)
 
-    await getData();
+    if(res.status === 200)
+      getData();
+    else{
+      console.log('data tampered0');
+      alert('Your data was tampered!' );
+    }
+
   };
 
   const verifyData = async () => {
-    throw new Error("Not implemented");
-  };
+    const res = await fetch(`${API_URL}/recover`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    if(res.status === 200)
+      var { data } = await res.json();
+      setData(data);
+    };
 
   return (
-    <div
-      style={{
-        width: "100vw",
-        height: "100vh",
-        display: "flex",
-        position: "absolute",
-        padding: 0,
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-        gap: "20px",
-        fontSize: "30px",
-      }}
-    >
+    <div    >
       <div>Saved Data</div>
       <input
         style={{ fontSize: "30px" }}
@@ -66,7 +74,7 @@ function App() {
           Update Data
         </button>
         <button style={{ fontSize: "20px" }} onClick={verifyData}>
-          Verify Data
+          Recover Last Data
         </button>
       </div>
     </div>

@@ -24,7 +24,6 @@ export const getDataUser = async (token) => {
     },
   });
   const data = await response.json();
-  console.log("response server", data);
   return data;
 };
 
@@ -42,7 +41,6 @@ export const updateDataUser = async (
     },
   });
   const json = await res.json();
-  console.log("json", json);
   return json;
 };
 
